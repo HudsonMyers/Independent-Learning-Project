@@ -46,7 +46,7 @@
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
 
                 <!-- Middle School Square -->
-                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">Middle School</h2>
                 </div>
 
@@ -275,9 +275,16 @@
         // This function will handle all the Firebase and Authentication setup
         async function initializeFirebase() {
             try {
-                // IMPORTANT: Check if the firebaseConfig exists before parsing
+                // IMPORTANT: Only proceed with Firebase initialization if the configuration is available.
                 if (!rawFirebaseConfig || rawFirebaseConfig.length === 0) {
-                    throw new Error("Firebase config is missing.");
+                    console.warn("Firebase config is missing. Database features will be disabled.");
+                    userIdDisplay.textContent = 'Disabled';
+                    const errorMessageElement = document.getElementById('errorMessage');
+                    if (errorMessageElement) {
+                        errorMessageElement.textContent = "Database features are disabled because the Firebase configuration is missing. Please check the console for details.";
+                        errorMessageElement.classList.remove('hidden');
+                    }
+                    return; // Exit the function gracefully
                 }
 
                 const firebaseConfig = JSON.parse(rawFirebaseConfig);
@@ -293,7 +300,6 @@
                         userIdDisplay.textContent = currentUserId;
                         isFirebaseReady = true;
                         console.log("Firebase and authentication are now ready.");
-                        populateCollegeDropdown();
                     } else {
                         console.log("User is signed out.");
                         // Handle the case where the user is signed out
@@ -497,7 +503,7 @@
 
             setCourseBtn.addEventListener('click', async () => {
                 if (!isFirebaseReady) {
-                    errorMessage.textContent = "Firebase is not ready yet. Please wait a moment and try again.";
+                    errorMessage.textContent = "This feature requires a database connection. Please contact support if this error persists.";
                     errorMessage.classList.remove('hidden');
                     return;
                 }
@@ -543,6 +549,14 @@
             });
 
             generateBtn.addEventListener('click', async () => {
+                if (!isFirebaseReady) {
+                    questionText.textContent = "This feature requires a database connection. Please contact support if this error persists.";
+                    questionText.classList.remove('hidden');
+                    hideAnswerButtons();
+                    hideAnswerTexts();
+                    feedbackText.classList.add('hidden');
+                    return;
+                }
                 const college = collegeDropdown.value;
                 const major = majorDropdown.value;
                 const course = courseInput.value;
@@ -840,6 +854,7 @@
 
             // Start the application after the DOM is loaded
             await initializeFirebase();
+            populateCollegeDropdown();
         });
     </script>
 </body>
