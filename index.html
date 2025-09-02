@@ -1,21 +1,168 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Independent Learning Project - Coming Soon</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 15vh;
-      background-color: #f4f4f4;
-      color: #333;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Independent Learning Project</title>
+    <!--
+      This script tag loads Tailwind CSS, a framework that lets us style the website
+      with simple classes directly in the HTML. It makes the site look modern and clean.
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* We are using the 'Inter' font for a clean, modern look. */
+      body {
+          font-family: 'Inter', sans-serif;
+      }
+    </style>
 </head>
-<body>
-  <h1>Independent Learning Project</h1>
-  <p>Our website is coming soon! Stay tuned.</p>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!--
+      This is the main container for our website. It's centered on the page.
+    -->
+    <div class="bg-white shadow-xl rounded-2xl p-6 md:p-10 w-full max-w-4xl mx-auto my-8">
+
+        <!--
+          This is the navigation bar. We will use JavaScript to switch between pages
+          without reloading the page.
+        -->
+        <nav class="flex justify-center space-x-4 md:space-x-8 mb-6 border-b pb-4">
+            <button id="home-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">Home</button>
+            <button id="about-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">About</button>
+            <button id="contact-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">Contact</button>
+        </nav>
+
+        <!--
+          This is the new Home page section, with a title and the three interactive squares.
+        -->
+        <section id="home-section" class="website-section">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 text-center">Independent Learning Project</h1>
+            <p class="text-lg md:text-xl text-gray-600 text-center mb-10">
+              A Twist on Education
+            </p>
+
+            <!-- This div holds the three interactive squares -->
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
+
+                <!-- Middle School Square -->
+                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                    <h2 class="text-2xl font-bold">Middle School</h2>
+                </div>
+
+                <!-- High School Square -->
+                <div id="high-school-square" data-target="high-school-section" class="interactive-square cursor-pointer bg-purple-500 hover:bg-purple-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                    <h2 class="text-2xl font-bold">High School</h2>
+                </div>
+
+                <!-- College Courses Square -->
+                <div id="college-courses-square" data-target="college-courses-section" class="interactive-square cursor-pointer bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                    <h2 class="text-2xl font-bold">College Courses</h2>
+                </div>
+
+            </div>
+        </section>
+
+        <!--
+          This is the About section. It's hidden by default.
+        -->
+        <section id="about-section" class="website-section hidden">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">About Me</h2>
+            <p class="text-md text-gray-700 leading-relaxed text-center">
+              My name is Hudson Myers, and I'm a student who is passionate about building things.
+              This website is my personal project to document and showcase the skills I'm learning on my own.
+              I believe that independent learning is a powerful way to grow and innovate, and I'm excited
+              to share what I'm creating with you.
+            </p>
+        </section>
+
+        <!--
+          This is the Contact section. It's hidden by default.
+        -->
+        <section id="contact-section" class="website-section hidden">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Contact</h2>
+            <p class="text-md text-gray-700 leading-relaxed text-center">
+              If you have any questions or just want to say hello, feel free to reach out to me via email or social media.
+            </p>
+            <div class="mt-6 flex flex-col space-y-3 items-center">
+                <!-- Replace with your actual email link -->
+                <a href="mailto:your.email@example.com" class="text-lg text-blue-600 hover:underline transition-colors duration-300">your.email@example.com</a>
+                <!-- Replace with your social media links -->
+                <a href="#" class="text-lg text-blue-600 hover:underline transition-colors duration-300">LinkedIn</a>
+                <a href="#" class="text-lg text-blue-600 hover:underline transition-colors duration-300">Twitter</a>
+            </div>
+        </section>
+        
+        <!--
+          New section for Middle School. It's hidden by default.
+        -->
+        <section id="middle-school-section" class="website-section hidden">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Projects</h2>
+            <p class="text-md text-gray-700 leading-relaxed text-center">
+              This is the page for your middle school content. You can add text, images, or links to your projects here.
+            </p>
+        </section>
+
+        <!--
+          New section for High School. It's hidden by default.
+        -->
+        <section id="high-school-section" class="website-section hidden">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Projects</h2>
+            <p class="text-md text-gray-700 leading-relaxed text-center">
+              This is the page for your high school content. You can add text, images, or links to your projects here.
+            </p>
+        </section>
+
+        <!--
+          New section for College Courses. It's hidden by default.
+        -->
+        <section id="college-courses-section" class="website-section hidden">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">College Courses</h2>
+            <p class="text-md text-gray-700 leading-relaxed text-center">
+              This is the page for your college course content. You can add text, images, or links to your projects here.
+            </p>
+        </section>
+
+    </div>
+
+    <!--
+      This is the JavaScript section. It handles the logic for showing and hiding
+      the different website sections when you click the navigation buttons AND the new squares.
+    -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+          const navButtons = document.querySelectorAll('nav .nav-button');
+          const interactiveSquares = document.querySelectorAll('.interactive-square');
+          const sections = document.querySelectorAll('.website-section');
+
+          // Function to show a specific section and hide all others
+          const showSection = (sectionId) => {
+              sections.forEach(section => {
+                  section.classList.add('hidden');
+              });
+              const targetSection = document.getElementById(sectionId);
+              if (targetSection) {
+                  targetSection.classList.remove('hidden');
+              }
+          };
+
+          // Add click event listeners to the main navigation buttons
+          navButtons.forEach(button => {
+              button.addEventListener('click', () => {
+                  const targetSectionId = button.id.replace('-button', '-section');
+                  showSection(targetSectionId);
+              });
+          });
+
+          // Add click event listeners to the new interactive squares
+          interactiveSquares.forEach(square => {
+              square.addEventListener('click', () => {
+                  const targetSectionId = square.getAttribute('data-target');
+                  showSection(targetSectionId);
+              });
+          });
+      });
+    </script>
+
 </body>
 </html>
