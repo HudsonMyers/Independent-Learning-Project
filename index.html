@@ -4,13 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Independent Learning Project</title>
-    <!--
-      This script tag loads Tailwind CSS, a framework that lets us style the website
-      with simple classes directly in the HTML. It makes the site look modern and clean.
-    -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      /* We are using the 'Inter' font for a clean, modern look. */
       body {
           font-family: 'Inter', sans-serif;
       }
@@ -18,54 +13,36 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!--
-      This is the main container for our website. It's centered on the page.
-    -->
     <div class="bg-white shadow-xl rounded-2xl p-6 md:p-10 w-full max-w-4xl mx-auto my-8">
 
-        <!--
-          This is the navigation bar. We will use JavaScript to switch between pages
-          without reloading the page.
-        -->
         <nav class="flex justify-center space-x-4 md:space-x-8 mb-6 border-b pb-4">
             <button id="home-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">Home</button>
             <button id="about-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">About</button>
             <button id="contact-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">Contact</button>
         </nav>
 
-        <!--
-          This is the new Home page section, with a title and the three interactive squares.
-        -->
         <section id="home-section" class="website-section">
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 text-center">Independent Learning Project</h1>
             <p class="text-lg md:text-xl text-gray-600 text-center mb-10">
               A Twist on Education
             </p>
 
-            <!-- This div holds the three interactive squares -->
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
 
-                <!-- Middle School Square -->
-                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">Middle School</h2>
                 </div>
 
-                <!-- High School Square -->
                 <div id="high-school-square" data-target="high-school-section" class="interactive-square cursor-pointer bg-purple-500 hover:bg-purple-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">High School</h2>
                 </div>
 
-                <!-- College Courses Square -->
                 <div id="college-courses-square" data-target="college-courses-section" class="interactive-square cursor-pointer bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">College Courses</h2>
                 </div>
-
             </div>
         </section>
 
-        <!--
-          This is the About section. It's hidden by default.
-        -->
         <section id="about-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">About Me</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -76,50 +53,36 @@
             </p>
         </section>
 
-        <!--
-          This is the Contact section. It's hidden by default.
-        -->
         <section id="contact-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Contact</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
               If you have any questions or just want to say hello, feel free to reach out to me via email or social media.
             </p>
             <div class="mt-6 flex flex-col space-y-3 items-center">
-                <!-- Replace with your actual email link -->
                 <a href="mailto:your.email@example.com" class="text-lg text-blue-600 hover:underline transition-colors duration-300">your.email@example.com</a>
-                <!-- Replace with your social media links -->
                 <a href="#" class="text-lg text-blue-600 hover:underline transition-colors duration-300">LinkedIn</a>
                 <a href="#" class="text-lg text-blue-600 hover:underline transition-colors duration-300">Twitter</a>
             </div>
         </section>
         
-        <!--
-          New section for Middle School. It's hidden by default.
-        -->
         <section id="middle-school-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
               Click on a subject below to view projects.
             </p>
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6 mt-8">
-                <!-- Math Square -->
                 <div data-target="middle-school-math-section" class="interactive-square cursor-pointer bg-white hover:bg-gray-200 text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h3 class="text-2xl font-bold">Math</h3>
                 </div>
-                <!-- English Square -->
                 <div data-target="middle-school-english-section" class="interactive-square cursor-pointer bg-white hover:bg-gray-200 text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h3 class="text-2xl font-bold">English</h3>
                 </div>
-                <!-- Science Square -->
                 <div data-target="middle-school-science-section" class="interactive-square cursor-pointer bg-white hover:bg-gray-200 text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h3 class="text-2xl font-bold">Science</h3>
                 </div>
             </div>
         </section>
 
-        <!--
-          New section for High School. It's hidden by default.
-        -->
         <section id="high-school-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -127,23 +90,16 @@
             </p>
         </section>
 
-        <!--
-          New section for College Courses. This is the main content you've asked for.
-        -->
         <section id="college-courses-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">College Courses</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center mb-8">
                 Generate a quiz question for your college-level courses!
             </p>
             
-            <p class="text-sm text-gray-400 text-center mb-4">Your User ID: <span id="userIdDisplay">Loading...</span></p>
+            <p class="text-sm text-gray-400 text-center mb-4">Your User ID: <span id="userIdDisplay">Local User</span></p>
 
             <div class="space-y-6">
-                <!-- Course Setup Inputs -->
                 <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4">
-                    <p id="firebase-message" class="text-center text-sm font-medium text-red-600 hidden">
-                        Database features are disabled because the Firebase configuration is missing. Please contact support.
-                    </p>
                     <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
                         <select id="collegeDropdown" class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors" disabled>
                             <option value="">Select College</option>
@@ -159,7 +115,6 @@
                     <p id="errorMessage" class="text-red-500 text-sm mt-2 hidden"></p>
                 </div>
 
-                <!-- Quiz Generation Inputs -->
                 <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4 hidden" id="quiz-inputs-section">
                     <h3 id="courseHeader" class="text-xl font-bold text-center mb-4 hidden"></h3>
                     <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
@@ -176,7 +131,6 @@
                     <button id="backToCourses" class="w-full px-6 py-3 bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition-colors hidden">Back to Courses</button>
                 </div>
                 
-                <!-- Quiz Display -->
                 <div class="bg-white p-6 rounded-xl shadow-lg mt-8 space-y-4 hidden" id="quiz-display-section">
                     <p id="questionText" class="text-lg font-semibold text-gray-800 hidden">Question text will appear here.</p>
                     <div class="space-y-2">
@@ -190,9 +144,6 @@
             </div>
         </section>
 
-        <!--
-          New section for Middle School Math.
-        -->
         <section id="middle-school-math-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Math Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -200,9 +151,6 @@
             </p>
         </section>
 
-        <!--
-          New section for Middle School English.
-        -->
         <section id="middle-school-english-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School English Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -210,9 +158,6 @@
             </p>
         </section>
 
-        <!--
-          New section for Middle School Science.
-        -->
         <section id="middle-school-science-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Science Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -220,9 +165,6 @@
             </p>
         </section>
 
-        <!--
-          New section for High School. It's hidden by default.
-        -->
         <section id="high-school-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -230,9 +172,6 @@
             </p>
         </section>
 
-        <!--
-          New section for High School Math.
-        -->
         <section id="high-school-math-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Math Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -240,9 +179,6 @@
             </p>
         </section>
 
-        <!--
-          New section for High School English.
-        -->
         <section id="high-school-english-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School English Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -250,9 +186,6 @@
             </p>
         </section>
 
-        <!--
-          New section for High School Science.
-        -->
         <section id="high-school-science-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Science Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -262,142 +195,45 @@
 
     </div>
 
-    <!-- Firebase SDKs -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global variables provided by the Canvas environment.
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let app, db, auth;
-        let currentUserId = null;
-        let isFirebaseReady = false;
-        
-        // This function will handle all the Firebase and Authentication setup
-        async function initializeFirebase() {
-            try {
-                const firebaseMessage = document.getElementById('firebase-message');
-                const courseInputs = document.querySelectorAll('#college-courses-section input, #college-courses-section select, #college-courses-section button');
-
-                // Log the variables to see what the environment is providing
-                console.log("App ID:", appId);
-                console.log("Firebase Config:", firebaseConfig);
-                console.log("Initial Auth Token:", initialAuthToken);
-
-                // IMPORTANT: Only proceed with Firebase initialization if the configuration is available.
-                if (!firebaseConfig) {
-                    console.warn("Firebase config is missing. Database features will be disabled.");
-                    document.getElementById('userIdDisplay').textContent = 'Disabled';
-                    firebaseMessage.classList.remove('hidden');
-                    courseInputs.forEach(input => input.disabled = true);
-                    return; // Exit the function gracefully
-                }
-
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                // Wait for authentication to be complete before doing anything else
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        document.getElementById('userIdDisplay').textContent = currentUserId;
-                        isFirebaseReady = true;
-                        console.log("Firebase and authentication are now ready.");
-                        // Enable the Set Course button and dropdowns now that Firebase is ready
-                        document.getElementById('setCourse').disabled = false;
-                        document.getElementById('collegeDropdown').disabled = false;
-                        document.getElementById('majorDropdown').disabled = false;
-                    } else {
-                        console.log("User is signed out.");
-                        // Handle the case where the user is signed out
-                    }
-                });
-
-                // Authenticate the user once the app is initialized
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    console.log("Signed in with custom token.");
-                } else {
-                    await signInAnonymously(auth);
-                    console.log("Signed in anonymously.");
-                }
-
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                document.getElementById('userIdDisplay').textContent = 'Error';
-                const errorMessageElement = document.getElementById('errorMessage');
-                if (errorMessageElement) {
-                    errorMessageElement.textContent = "Firebase failed to initialize. Please check the console for details.";
-                    errorMessageElement.classList.remove('hidden');
-                }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            await initializeFirebase();
-            
+        document.addEventListener('DOMContentLoaded', () => {
             const navButtons = document.querySelectorAll('nav .nav-button');
             const interactiveSquares = document.querySelectorAll('.interactive-square');
             const sections = document.querySelectorAll('.website-section');
             
             let correctAnswer = '';
-            let answerOptions = {};
-
+            
             const collegeMajors = {
                 "Coastal Carolina University": [
-                    "Marine Science",
-                    "Business Administration",
-                    "Computer Science",
-                    "Exercise and Sport Science",
-                    "Physical Education"
+                    "Marine Science", "Business Administration", "Computer Science",
+                    "Exercise and Sport Science", "Physical Education"
                 ],
                 "North Carolina State University": [
-                    "Engineering",
-                    "Computer Science",
-                    "Agricultural Sciences",
-                    "Supply Chain Management and Logistics",
-                    "Textile Engineering"
+                    "Engineering", "Computer Science", "Agricultural Sciences",
+                    "Supply Chain Management and Logistics", "Textile Engineering"
                 ],
                 "University of Alabama": [
-                    "Political Science",
-                    "Nursing",
-                    "Business",
-                    "Management Information Systems",
-                    "Psychology"
+                    "Political Science", "Nursing", "Business",
+                    "Management Information Systems", "Psychology"
                 ],
                 "Wake Technical Community College": [
-                    "Liberal Arts",
-                    "Information Technology",
-                    "Business",
-                    "Registered Nursing",
-                    "Construction",
-                    "GM ASEP"
+                    "Liberal Arts", "Information Technology", "Business",
+                    "Registered Nursing", "Construction", "GM ASEP"
                 ],
                 "Georgia Institute of Technology": [
-                    "Aerospace Engineering",
-                    "Computer Science",
-                    "Industrial Design",
+                    "Aerospace Engineering", "Computer Science", "Industrial Design",
                     "Biomedical Engineering"
                 ]
             };
 
-            // Function to show a specific section and hide all others
             const showSection = (sectionId) => {
-                sections.forEach(section => {
-                    section.classList.add('hidden');
-                });
+                sections.forEach(section => section.classList.add('hidden'));
                 const targetSection = document.getElementById(sectionId);
                 if (targetSection) {
                     targetSection.classList.remove('hidden');
                 }
             };
 
-            // Add click event listeners to the main navigation buttons
             navButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const targetSectionId = button.id.replace('-button', '-section');
@@ -405,7 +241,6 @@
                 });
             });
 
-            // Add click event listeners to the new interactive squares
             interactiveSquares.forEach(square => {
                 square.addEventListener('click', () => {
                     const targetSectionId = square.getAttribute('data-target');
@@ -413,7 +248,6 @@
                 });
             });
 
-            // ---- Start of your converted College Course Quiz App logic ----
             const collegeDropdown = document.getElementById('collegeDropdown');
             const majorDropdown = document.getElementById('majorDropdown');
             const courseInput = document.getElementById('courseInput');
@@ -441,7 +275,6 @@
             const answerTextC = document.getElementById('answerTextC');
             const answerTextD = document.getElementById('answerTextD');
             
-            // Helper to set select options
             const setOptions = (selectElement, options) => {
                 selectElement.innerHTML = '';
                 options.forEach(option => {
@@ -452,7 +285,6 @@
                 });
             };
 
-            // Helper to hide elements
             const hideAllQuizElements = () => {
                 quizInputsSection.classList.add('hidden');
                 quizDisplaySection.classList.add('hidden');
@@ -480,7 +312,6 @@
               answerTextD.textContent = '';
             };
             
-            // Function to reset the quiz display
             const resetQuiz = () => {
                 questionText.textContent = "Question text will appear here.";
                 feedbackText.textContent = "";
@@ -490,7 +321,6 @@
                 quizDisplaySection.classList.add('hidden');
             };
 
-            // Populate college dropdown on page load
             const populateCollegeDropdown = () => {
                 const colleges = Object.keys(collegeMajors);
                 const collegeOptions = [{ label: "Select College", value: "" }, ...colleges.map(college => ({
@@ -501,7 +331,6 @@
                 collegeDropdown.disabled = false;
             };
 
-            // Populate major dropdown when college is selected
             const populateMajorDropdown = (collegeName) => {
                 const majors = collegeMajors[collegeName] || [];
                 const majorOptions = [{ label: "Select Major", value: "" }, ...majors.map(major => ({
@@ -512,7 +341,6 @@
                 majorDropdown.disabled = false;
             };
             
-            // Event listeners
             collegeDropdown.addEventListener('change', () => {
                 const selectedCollege = collegeDropdown.value;
                 if (selectedCollege) {
@@ -526,7 +354,6 @@
                 hideAllQuizElements();
             });
             
-            // Back button logic for the quiz section
             backToCoursesBtn.addEventListener('click', () => {
                 hideAllQuizElements();
                 showSection('college-courses-section');
@@ -538,13 +365,17 @@
                 resetQuiz();
             });
 
-            setCourseBtn.addEventListener('click', async () => {
-                if (!isFirebaseReady) {
-                    errorMessage.textContent = "This feature requires a database connection. Please contact support if this error persists.";
-                    errorMessage.classList.remove('hidden');
-                    return;
+            const saveCourseToLocalStorage = (college, major, course) => {
+                const courses = JSON.parse(localStorage.getItem('courses')) || [];
+                const newCourse = { college, major, name: course };
+                const existingCourse = courses.find(c => c.name === course);
+                if (!existingCourse) {
+                    courses.push(newCourse);
+                    localStorage.setItem('courses', JSON.stringify(courses));
                 }
+            };
 
+            setCourseBtn.addEventListener('click', async () => {
                 const college = collegeDropdown.value;
                 const major = majorDropdown.value;
                 const course = courseInput.value.trim();
@@ -552,7 +383,6 @@
                 if (!college || !major || !course) {
                     errorMessage.textContent = "Please complete all fields to set the course.";
                     errorMessage.classList.remove('hidden');
-                    hideAllQuizElements();
                     return;
                 }
                 
@@ -560,44 +390,73 @@
                 quizInputsSection.classList.remove('hidden');
                 unitDropdown.innerHTML = '<option value="">Loading units...</option>';
                 unitDropdown.disabled = true;
-                setCourseBtn.disabled = true;
-                setCourseBtn.textContent = 'Saving...';
+
+                saveCourseToLocalStorage(college, major, course);
+                
+                courseHeader.textContent = `${college} • ${major} • ${course}`;
+                courseHeader.classList.remove('hidden');
+                backToCoursesBtn.classList.remove('hidden');
 
                 try {
-                    const courseId = course.replace(/\s+/g, '-').toLowerCase();
-                    const coursesRef = collection(db, 'artifacts', appId, 'users', currentUserId, 'courses');
-                    const courseDocRef = doc(coursesRef, courseId);
+                    const prompt = `Generate a list of 5 to 7 logical units for the following course, major, and college. Respond as a JSON array of strings, where each string is the unit name.
+                    - College: ${college}
+                    - Major: ${major}
+                    - Course: ${course}
                     
-                    const defaultUnits = ["Introduction", "Unit 1", "Unit 2", "Unit 3", "Unit 4"];
+                    Example response format: ["Unit 1: Introduction", "Unit 2: Fundamentals", "Unit 3: Advanced Topics"]`;
 
-                    await setDoc(courseDocRef, {
-                        college: college,
-                        major: major,
-                        name: course,
-                        units: defaultUnits
+                    const payload = {
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "ARRAY",
+                                items: { "type": "STRING" }
+                            }
+                        }
+                    };
+                    
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
                     });
                     
-                    console.log("Course set in Firestore. Loading units...");
+                    if (!response.ok) {
+                        throw new Error(`API call failed with status: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content) {
+                        const jsonString = result.candidates[0].content.parts[0].text;
+                        const units = JSON.parse(jsonString);
 
+                        const unitOptions = [{ label: "Select Unit", value: "" }, ...units.map(unit => ({
+                            label: unit,
+                            value: unit
+                        }))];
+                        setOptions(unitDropdown, unitOptions);
+                        unitDropdown.disabled = false;
+                        
+                    } else {
+                        throw new Error("Invalid response from the API.");
+                    }
+                } catch (error) {
+                    console.error("Error generating units:", error);
+                    errorMessage.textContent = "Failed to generate units. Please try again.";
+                    errorMessage.classList.remove('hidden');
+                    // Fallback to static units
+                    const defaultUnits = ["Introduction", "Unit 1", "Unit 2", "Unit 3", "Unit 4"];
                     const unitOptions = [{ label: "Select Unit", value: "" }, ...defaultUnits.map(unit => ({
                         label: unit,
                         value: unit
                     }))];
                     setOptions(unitDropdown, unitOptions);
                     unitDropdown.disabled = false;
-                    
-                    courseHeader.textContent = `${college} • ${major} • ${course}`;
-                    courseHeader.classList.remove('hidden');
-                    backToCoursesBtn.classList.remove('hidden');
-
-                } catch (error) {
-                    console.error("Error setting course:", error);
-                    errorMessage.textContent = `Failed to save course. Error: ${error.message}. Check console for details.`;
-                    errorMessage.classList.remove('hidden');
-                    quizInputsSection.classList.add('hidden');
-                } finally {
-                    setCourseBtn.disabled = false;
-                    setCourseBtn.textContent = 'Set Course';
                 }
             });
             
@@ -606,14 +465,6 @@
             });
 
             generateBtn.addEventListener('click', async () => {
-                if (!isFirebaseReady) {
-                    questionText.textContent = "This feature requires a database connection. Please contact support if this error persists.";
-                    questionText.classList.remove('hidden');
-                    hideAnswerButtons();
-                    hideAnswerTexts();
-                    feedbackText.classList.add('hidden');
-                    return;
-                }
                 const college = collegeDropdown.value;
                 const major = majorDropdown.value;
                 const course = courseInput.value;
@@ -703,13 +554,6 @@
                         
                         showAnswerButtons();
                         questionText.classList.remove('hidden');
-                        
-                        answerOptions = {
-                            'A': quizData.options[0],
-                            'B': quizData.options[1],
-                            'C': quizData.options[2],
-                            'D': quizData.options[3]
-                        };
 
                     } else {
                         throw new Error("Invalid response from the API.");
@@ -724,7 +568,6 @@
                 }
             });
 
-            // Answer button logic
             const checkAnswer = (selectedText) => {
                 if (selectedText === correctAnswer) {
                     feedbackText.textContent = "Correct!";
@@ -740,7 +583,6 @@
             answerBtnC.addEventListener('click', () => checkAnswer(answerTextC.textContent));
             answerBtnD.addEventListener('click', () => checkAnswer(answerTextD.textContent));
 
-            // Initial population of the dropdowns
             populateCollegeDropdown();
             
         });
