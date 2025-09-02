@@ -141,6 +141,9 @@
             <div class="space-y-6">
                 <!-- Course Setup Inputs -->
                 <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4">
+                    <p id="firebase-message" class="text-center text-sm font-medium text-red-600 hidden">
+                        Database features are disabled because the Firebase configuration is missing.
+                    </p>
                     <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
                         <select id="collegeDropdown" class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors" disabled>
                             <option value="">Select College</option>
@@ -275,15 +278,15 @@
         // This function will handle all the Firebase and Authentication setup
         async function initializeFirebase() {
             try {
+                const firebaseMessage = document.getElementById('firebase-message');
+                const courseInputs = document.querySelectorAll('#college-courses-section input, #college-courses-section select, #college-courses-section button');
+
                 // IMPORTANT: Only proceed with Firebase initialization if the configuration is available.
                 if (!rawFirebaseConfig || rawFirebaseConfig.length === 0) {
                     console.warn("Firebase config is missing. Database features will be disabled.");
                     userIdDisplay.textContent = 'Disabled';
-                    const errorMessageElement = document.getElementById('errorMessage');
-                    if (errorMessageElement) {
-                        errorMessageElement.textContent = "Database features are disabled because the Firebase configuration is missing. Please check the console for details.";
-                        errorMessageElement.classList.remove('hidden');
-                    }
+                    firebaseMessage.classList.remove('hidden');
+                    courseInputs.forEach(input => input.disabled = true);
                     return; // Exit the function gracefully
                 }
 
