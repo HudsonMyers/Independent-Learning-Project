@@ -29,7 +29,7 @@
 
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
 
-                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white-500 hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white hover:bg-white text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">Middle School</h2>
                 </div>
 
@@ -377,132 +377,126 @@
             };
 
             setCourseBtn.addEventListener('click', async () => {
-                const college = collegeDropdown.value;
-                const major = majorDropdown.value;
-                const course = courseInput.value.trim();
+    const college = collegeDropdown.value;
+    const major = majorDropdown.value;
+    const course = courseInput.value.trim();
 
-                if (!college || !major || !course) {
-                    errorMessage.textContent = "Please complete all fields to set the course.";
-                    errorMessage.classList.remove('hidden');
-                    return;
-                }
-                
-                errorMessage.classList.add('hidden');
-                quizInputsSection.classList.remove('hidden');
-                unitDropdown.innerHTML = '<option value="">Loading units...</option>';
-                unitDropdown.disabled = true;
+    if (!college || !major || !course) {
+        errorMessage.textContent = "Please complete all fields to set the course.";
+        errorMessage.classList.remove('hidden');
+        return;
+    }
 
-                const cachedUnits = getCourseUnitsFromLocalStorage(course);
-                if (cachedUnits) {
-                    const unitOptions = [{ label: "Select Unit", value: "" }, ...cachedUnits.map(unit => ({
-                        label: unit,
-                        value: unit
-                    }))];
-                    setOptions(unitDropdown, unitOptions);
-                    unitDropdown.disabled = false;
-                    courseHeader.textContent = `${college} • ${major} • ${course}`;
-                    courseHeader.classList.remove('hidden');
-                    backToCoursesBtn.classList.remove('hidden');
-                    return;
-                }
-                
-                courseHeader.textContent = `${college} • ${major} • ${course}`;
-                courseHeader.classList.remove('hidden');
-                backToCoursesBtn.classList.remove('hidden');
+    errorMessage.classList.add('hidden');
+    quizInputsSection.classList.remove('hidden');
+    unitDropdown.innerHTML = '<option value="">Loading units...</option>';
+    unitDropdown.disabled = true;
 
-                try {
-                    const prompt = `You are a college professor listing 12 detailed and specific unit names for the course "${course}" offered at ${college} for a ${major} major.
-                    
-                    Provide ONLY a JSON array of strings with the unit titles. Do NOT include any text or explanation.
-                    
-                    Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
+    const cachedUnits = getCourseUnitsFromLocalStorage(course);
+    if (cachedUnits) {
+        const unitOptions = [{ label: "Select Unit", value: "" }, ...cachedUnits.map(unit => ({
+            label: unit,
+            value: unit
+        }))];
+        setOptions(unitDropdown, unitOptions);
+        unitDropdown.disabled = false;
+        courseHeader.textContent = `${college} • ${major} • ${course}`;
+        courseHeader.classList.remove('hidden');
+        backToCoursesBtn.classList.remove('hidden');
+        return;
+    }
 
-                    const payload = {
-                        contents: [{ parts: [{ text: prompt }] }],
-                        generationConfig: {
-                            responseMimeType: "application/json",
-                            responseSchema: {
-                                type: "ARRAY",
-                                items: { "type": "STRING" }
-                            }
-                        }
-                    };
-                    
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+    courseHeader.textContent = `${college} • ${major} • ${course}`;
+    courseHeader.classList.remove('hidden');
+    backToCoursesBtn.classList.remove('hidden');
 
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`API call failed with status: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
-                    
-                    if (result.candidates && result.candidates.length > 0 && result.candidates[0].content) {
-                        const jsonString = result.candidates[0].content.parts[0].text;
-                        const units = JSON.parse(jsonString);
+    try {
+        // Call your backend API
+        const response = await fetch(`/api/college?type=units&college=${encodeURIComponent(college)}&major=${encodeURIComponent(major)}&course=${encodeURIComponent(course)}`);
+        if (!response.ok) throw new Error(`Backend API call failed with status: ${response.status}`);
+        const units = await response.json();
 
-                        saveCourseUnitsToLocalStorage(course, units);
-                        
-                        const unitOptions = [{ label: "Select Unit", value: "" }, ...units.map(unit => ({
-                            label: unit,
-                            value: unit
-                        }))];
-                        setOptions(unitDropdown, unitOptions);
-                        unitDropdown.disabled = false;
-                        
-                    } else {
-                        throw new Error("Invalid response from the API.");
-                    }
-                } catch (error) {
-                    console.error("Error generating units:", error);
-                    errorMessage.textContent = "Failed to generate units. Please try again.";
-                    errorMessage.classList.remove('hidden');
-                    const defaultUnits = ["Introduction", "Unit 1", "Unit 2", "Unit 3", "Unit 4"];
-                    const unitOptions = [{ label: "Select Unit", value: "" }, ...defaultUnits.map(unit => ({
-                        label: unit,
-                        value: unit
-                    }))];
-                    setOptions(unitDropdown, unitOptions);
-                    unitDropdown.disabled = false;
-                }
-            });
-            
-            difficultySldr.addEventListener('input', () => {
-                difficultyValue.textContent = difficultySldr.value;
-            });
+        saveCourseUnitsToLocalStorage(course, units);
 
-            generateBtn.addEventListener('click', async () => {
-                const college = collegeDropdown.value;
-                const major = majorDropdown.value;
-                const course = courseInput.value;
-                const unit = unitDropdown.value;
-                const topic = topicInput.value;
-                const difficulty = difficultySldr.value;
+        const unitOptions = [{ label: "Select Unit", value: "" }, ...units.map(unit => ({
+            label: unit.label,
+            value: unit.value
+        }))];
+        setOptions(unitDropdown, unitOptions);
+        unitDropdown.disabled = false;
 
-                if (!college || !major || !course || !unit || !topic) {
-                    questionText.textContent = "Please fill in all fields.";
-                    questionText.classList.remove('hidden');
-                    hideAnswerButtons();
-                    hideAnswerTexts();
-                    feedbackText.classList.add('hidden');
-                    return;
-                }
+    } catch (error) {
+        console.error("Error generating units:", error);
+        errorMessage.textContent = "Failed to generate units. Please try again.";
+        errorMessage.classList.remove('hidden');
 
-                questionText.textContent = "Generating question...";
-                questionText.classList.remove('hidden');
-                quizDisplaySection.classList.remove('hidden');
-                hideAnswerButtons();
-                hideAnswerTexts();
-                feedbackText.classList.add('hidden');
-                generateBtn.disabled = true;
-                generateBtn.textContent = 'Generating...';
+        const defaultUnits = ["Introduction", "Unit 1", "Unit 2", "Unit 3", "Unit 4"];
+        const unitOptions = [{ label: "Select Unit", value: "" }, ...defaultUnits.map(unit => ({
+            label: unit,
+            value: unit
+        }))];
+        setOptions(unitDropdown, unitOptions);
+        unitDropdown.disabled = false;
+    }
+});
 
+generateBtn.addEventListener('click', async () => {
+    const college = collegeDropdown.value;
+    const major = majorDropdown.value;
+    const course = courseInput.value;
+    const unit = unitDropdown.value;
+    const topic = topicInput.value;
+    const difficulty = difficultySldr.value;
+
+    if (!college || !major || !course || !unit || !topic) {
+        questionText.textContent = "Please fill in all fields.";
+        questionText.classList.remove('hidden');
+        hideAnswerButtons();
+        hideAnswerTexts();
+        feedbackText.classList.add('hidden');
+        return;
+    }
+
+    questionText.textContent = "Generating question...";
+    questionText.classList.remove('hidden');
+    quizDisplaySection.classList.remove('hidden');
+    hideAnswerButtons();
+    hideAnswerTexts();
+    feedbackText.classList.add('hidden');
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'Generating...';
+
+    try {
+        // Call your backend API
+        const response = await fetch(`/api/college?type=question&college=${encodeURIComponent(college)}&major=${encodeURIComponent(major)}&course=${encodeURIComponent(course)}&unit=${encodeURIComponent(unit)}&topic=${encodeURIComponent(topic)}&difficulty=${encodeURIComponent(difficulty)}`);
+        if (!response.ok) throw new Error(`Backend API call failed with status: ${response.status}`);
+        const content = await response.text();
+
+        const lines = content.trim().split('\n');
+        const question = lines.find(line => line.startsWith('Question:')).replace('Question:', '').trim();
+        const options = lines.filter(line => /^[A-D]\./.test(line)).map(line => line.substring(3).trim());
+        const answerLine = lines.find(line => line.startsWith('Correct Answer:'));
+        const answer = answerLine ? answerLine.substring(answerLine.indexOf(':') + 1).trim() : '';
+
+        questionText.textContent = question;
+        answerTextA.textContent = options[0];
+        answerTextB.textContent = options[1];
+        answerTextC.textContent = options[2];
+        answerTextD.textContent = options[3];
+        correctAnswer = options[answer.charCodeAt(0) - 65];
+
+        showAnswerButtons();
+        questionText.classList.remove('hidden');
+
+    } catch (error) {
+        console.error("Error generating question:", error);
+        questionText.textContent = "Failed to generate a question. Please try again.";
+        hideAnswerButtons();
+    } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Generate Question';
+    }
+});
                 try {
                     let category;
                     if (["Computer Science", "Information Technology", "Management Information Systems", "Engineering", "Supply Chain Management and Logistics", "Textile Engineering"].includes(major)) {
