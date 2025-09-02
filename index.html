@@ -283,6 +283,11 @@
                 const firebaseMessage = document.getElementById('firebase-message');
                 const courseInputs = document.querySelectorAll('#college-courses-section input, #college-courses-section select, #college-courses-section button');
 
+                // Log the variables to see what the environment is providing
+                console.log("App ID:", appId);
+                console.log("Firebase Config:", firebaseConfig);
+                console.log("Initial Auth Token:", initialAuthToken);
+
                 // IMPORTANT: Only proceed with Firebase initialization if the configuration is available.
                 if (!firebaseConfig) {
                     console.warn("Firebase config is missing. Database features will be disabled.");
@@ -303,6 +308,10 @@
                         document.getElementById('userIdDisplay').textContent = currentUserId;
                         isFirebaseReady = true;
                         console.log("Firebase and authentication are now ready.");
+                        // Enable the Set Course button and dropdowns now that Firebase is ready
+                        document.getElementById('setCourse').disabled = false;
+                        document.getElementById('collegeDropdown').disabled = false;
+                        document.getElementById('majorDropdown').disabled = false;
                     } else {
                         console.log("User is signed out.");
                         // Handle the case where the user is signed out
