@@ -261,50 +261,64 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
         const userIdDisplay = document.getElementById('userIdDisplay');
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
 
-        // Check if Firebase is already initialized to prevent errors
         let app, db, auth;
-        try {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            console.log("Firebase initialized successfully.");
-        } catch (e) {
-            console.error("Firebase initialization failed:", e);
-        }
+        let currentUserId = null;
+        let isFirebaseReady = false;
 
-        async function authenticate() {
+        async function initializeFirebase() {
             try {
-                if (typeof __initial_auth_token !== 'undefined') {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                    console.log("Signed in with custom token.");
+                if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
+                    app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+
+                    await new Promise((resolve) => {
+                        onAuthStateChanged(auth, async (user) => {
+                            if (user) {
+                                console.log("User is already authenticated.");
+                                currentUserId = user.uid;
+                                resolve();
+                            } else {
+                                if (typeof __initial_auth_token !== 'undefined') {
+                                    await signInWithCustomToken(auth, __initial_auth_token);
+                                    currentUserId = auth.currentUser.uid;
+                                    console.log("Signed in with custom token.");
+                                } else {
+                                    await signInAnonymously(auth);
+                                    currentUserId = auth.currentUser.uid;
+                                    console.log("Signed in anonymously.");
+                                }
+                                resolve();
+                            }
+                        });
+                    });
+
+                    userIdDisplay.textContent = currentUserId;
+                    isFirebaseReady = true;
+                    console.log("Firebase and authentication are now ready.");
+                    populateCollegeDropdown();
                 } else {
-                    await signInAnonymously(auth);
-                    console.log("Signed in anonymously.");
+                    throw new Error("Firebase config is missing.");
                 }
-                const userId = auth.currentUser?.uid || crypto.randomUUID();
-                userIdDisplay.textContent = userId;
-                return userId;
             } catch (error) {
-                console.error("Authentication failed:", error);
+                console.error("Firebase initialization failed:", error);
                 userIdDisplay.textContent = 'Error';
-                return null;
+                const errorMessageElement = document.getElementById('errorMessage');
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = "Firebase failed to initialize. Please check the console for details.";
+                    errorMessageElement.classList.remove('hidden');
+                }
             }
         }
-        
-        // This is a global variable to store the user ID once authenticated
-        let currentUserId = null;
-        authenticate().then(userId => {
-            currentUserId = userId;
-        });
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const navButtons = document.querySelectorAll('nav .nav-button');
             const interactiveSquares = document.querySelectorAll('.interactive-square');
             const sections = document.querySelectorAll('.website-section');
@@ -480,6 +494,12 @@
             });
 
             setCourseBtn.addEventListener('click', async () => {
+                if (!isFirebaseReady) {
+                    errorMessage.textContent = "Firebase is not ready yet. Please wait a moment and try again.";
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+
                 const college = collegeDropdown.value;
                 const major = majorDropdown.value;
                 const course = courseInput.value.trim();
@@ -628,6 +648,10 @@
             // Backend functions (now in the frontend script)
             async function getCourseUnits(college, course, major) {
                 console.log("Attempting to get course units...");
+                if (!db || !currentUserId) {
+                    throw new Error("Database or user ID not ready.");
+                }
+
                 const courseId = `${college}-${major}-${course.replace(/\s/g, '-')}`;
                 const docRef = doc(db, 'artifacts', appId, 'users', currentUserId, 'courseUnits', courseId);
 
@@ -812,9 +836,8 @@
                 }
             }
 
-            // Initialize the app
-            populateCollegeDropdown();
-            
+            // Start the application after the DOM is loaded
+            await initializeFirebase();
         });
     </script>
 </body>
