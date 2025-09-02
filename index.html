@@ -46,7 +46,7 @@
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
 
                 <!-- Middle School Square -->
-                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">Middle School</h2>
                 </div>
 
@@ -142,7 +142,7 @@
                 <!-- Course Setup Inputs -->
                 <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4">
                     <p id="firebase-message" class="text-center text-sm font-medium text-red-600 hidden">
-                        Database features are disabled because the Firebase configuration is missing.
+                        Database features are disabled because the Firebase configuration is missing. Please contact support.
                     </p>
                     <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
                         <select id="collegeDropdown" class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors" disabled>
@@ -560,34 +560,26 @@
                 quizInputsSection.classList.remove('hidden');
                 unitDropdown.innerHTML = '<option value="">Loading units...</option>';
                 unitDropdown.disabled = true;
+                setCourseBtn.disabled = true;
+                setCourseBtn.textContent = 'Saving...';
 
                 try {
-                    // Path to the user's course data
+                    const courseId = course.replace(/\s+/g, '-').toLowerCase();
                     const coursesRef = collection(db, 'artifacts', appId, 'users', currentUserId, 'courses');
-                    const newCourseRef = doc(coursesRef, course.replace(/\s+/g, '-').toLowerCase());
+                    const courseDocRef = doc(coursesRef, courseId);
                     
-                    // Check if the course already exists
-                    const docSnap = await getDocs(query(coursesRef, where('name', '==', course)));
-                    
-                    if (docSnap.empty) {
-                        // If it doesn't exist, create it.
-                        await setDoc(newCourseRef, {
-                            college: college,
-                            major: major,
-                            name: course,
-                            units: [
-                                "Introduction", "Unit 1", "Unit 2", "Unit 3", "Unit 4"
-                            ]
-                        });
-                        console.log("New course added to Firestore.");
-                    } else {
-                         console.log("Course already exists.");
-                    }
+                    const defaultUnits = ["Introduction", "Unit 1", "Unit 2", "Unit 3", "Unit 4"];
 
-                    const courseDoc = await getDocs(query(coursesRef, where('name', '==', course)));
-                    const units = courseDoc.docs[0].data().units;
+                    await setDoc(courseDocRef, {
+                        college: college,
+                        major: major,
+                        name: course,
+                        units: defaultUnits
+                    });
                     
-                    const unitOptions = [{ label: "Select Unit", value: "" }, ...units.map(unit => ({
+                    console.log("Course set in Firestore. Loading units...");
+
+                    const unitOptions = [{ label: "Select Unit", value: "" }, ...defaultUnits.map(unit => ({
                         label: unit,
                         value: unit
                     }))];
@@ -600,9 +592,12 @@
 
                 } catch (error) {
                     console.error("Error setting course:", error);
-                    errorMessage.textContent = `Failed to load units. Error: ${error.message}. Check console for details.`;
+                    errorMessage.textContent = `Failed to save course. Error: ${error.message}. Check console for details.`;
                     errorMessage.classList.remove('hidden');
                     quizInputsSection.classList.add('hidden');
+                } finally {
+                    setCourseBtn.disabled = false;
+                    setCourseBtn.textContent = 'Set Course';
                 }
             });
             
