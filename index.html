@@ -46,7 +46,7 @@
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
 
                 <!-- Middle School Square -->
-                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white hover:bg-black text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white hover:bg-white text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">Middle School</h2>
                 </div>
 
@@ -667,11 +667,17 @@
                         body: JSON.stringify(payload)
                     });
                     const result = await response.json();
+                    
                     const contentPart = result.candidates?.[0]?.content?.parts?.[0];
                     if (!contentPart || !contentPart.text) {
                         throw new Error("Invalid response format from API.");
                     }
-                    const units = JSON.parse(contentPart.text);
+                    
+                    // Sanitize the raw text to ensure it's valid JSON
+                    const rawText = contentPart.text;
+                    const sanitizedText = rawText.replace(/^```json\s*|^\s*```|`{3}/g, '').trim();
+
+                    const units = JSON.parse(sanitizedText);
                     
                     // Save the units to Firestore before returning them
                     await setDoc(docRef, { units: JSON.stringify(units) });
@@ -730,17 +736,9 @@
 
                 const prompt = `You are a college professor designing a rigorous, course-appropriate multiple-choice quiz question.
                 
-                Generate an **${difficultyDescription}** question in the style of a **${randomStyle.toLowerCase()}**.
-                
-                Major: ${major}
-                Course: ${course}
-                Unit: ${unit}
-                Topic: ${topic}
-                
-                Create ONE multiple-choice question that:
-                - **Bases the entire question's scenario on a verifiable, interesting fact about the chosen ${topic}.**
-                - **Does NOT explicitly state "Fun fact:"**. Instead, the fact must be woven seamlessly into the problem statement.
-                - question output format should vary depending on ${stylesByCategory} and ${difficulty} offering word problems, code block debugging/correcting, math problems, etc. 
+                Generate ONE multiple-choice question that:
+                - Bases the entire question's scenario on a verifiable, interesting fact about the chosen ${topic}.
+                - Does NOT explicitly state "Fun fact:". Instead, the fact must be woven seamlessly into the problem statement.
                 - Requires the student to apply concepts from the ${course} and ${unit} to solve a problem related to that fact.
                 - Matches the academic depth of an actual quiz, test, or homework question in a ${course} course at ${college}.
                 - Is specific to the major and reflects the skills actually assessed in the unit "${unit}".
@@ -749,6 +747,7 @@
                 - Provides 4 answer choices labeled A–D, with one correct and clearly defensible answer.
                 - Does NOT assume knowledge outside of what’s commonly taught in the selected unit/topic.
                 - If the topic is repeated, use a different fact for the new question.
+                - question output format should vary depending on ${stylesByCategory} and ${difficulty} offering word problems, code block debugging/correcting, math problems, etc. 
                 
                 Return ONLY in this format:
                 
@@ -788,3 +787,4 @@
     </script>
 </body>
 </html>
+
