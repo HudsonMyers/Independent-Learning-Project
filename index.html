@@ -274,6 +274,7 @@
             app = initializeApp(firebaseConfig);
             db = getFirestore(app);
             auth = getAuth(app);
+            console.log("Firebase initialized successfully.");
         } catch (e) {
             console.error("Firebase initialization failed:", e);
         }
@@ -282,8 +283,10 @@
             try {
                 if (typeof __initial_auth_token !== 'undefined') {
                     await signInWithCustomToken(auth, __initial_auth_token);
+                    console.log("Signed in with custom token.");
                 } else {
                     await signInAnonymously(auth);
+                    console.log("Signed in anonymously.");
                 }
                 const userId = auth.currentUser?.uid || crypto.randomUUID();
                 userIdDisplay.textContent = userId;
@@ -507,7 +510,7 @@
 
                 } catch (error) {
                     console.error("Error setting course:", error);
-                    errorMessage.textContent = "Failed to load units. Please try again.";
+                    errorMessage.textContent = `Failed to load units. Error: ${error.message}. Check console for details.`;
                     errorMessage.classList.remove('hidden');
                     quizInputsSection.classList.add('hidden');
                 }
@@ -624,17 +627,24 @@
 
             // Backend functions (now in the frontend script)
             async function getCourseUnits(college, course, major) {
+                console.log("Attempting to get course units...");
                 const courseId = `${college}-${major}-${course.replace(/\s/g, '-')}`;
                 const docRef = doc(db, 'artifacts', appId, 'users', currentUserId, 'courseUnits', courseId);
-                const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    console.log("Using cached units.");
-                    const cachedUnits = docSnap.data().units;
-                    return JSON.parse(cachedUnits);
+                try {
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        console.log("Using cached units from Firestore.");
+                        const cachedUnits = docSnap.data().units;
+                        return JSON.parse(cachedUnits);
+                    }
+                } catch (error) {
+                    console.error("Firestore read failed:", error);
+                    console.warn("Falling back to generating units from API.");
                 }
                 
-                console.log("Generating new units and caching them.");
+                console.log("No cached units found. Generating new units from API...");
                 const apiKey = "";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
                 
@@ -670,25 +680,44 @@
                     
                     const contentPart = result.candidates?.[0]?.content?.parts?.[0];
                     if (!contentPart || !contentPart.text) {
-                        throw new Error("Invalid response format from API.");
+                        throw new Error("Invalid response format from API. Content part is missing.");
                     }
                     
                     const rawText = contentPart.text;
-                    const jsonMatch = rawText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+                    console.log("Raw API response text:", rawText);
+                    
+                    let units;
+                    try {
+                        const jsonMatch = rawText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+                        if (!jsonMatch) {
+                            throw new Error("No valid JSON array found in the response using regex.");
+                        }
+                        units = JSON.parse(jsonMatch[0]);
+                    } catch (parseError) {
+                        console.error("JSON parse failed. Attempting direct parse.", parseError);
+                        try {
+                            units = JSON.parse(rawText);
+                        } catch (directParseError) {
+                             throw new Error("Failed to parse JSON from response. Both direct and regex parsing failed.");
+                        }
+                    }
 
-                    if (!jsonMatch) {
-                        throw new Error("No valid JSON array found in the response.");
+                    // Save the units to Firestore before returning them
+                    console.log("Saving units to Firestore...");
+                    try {
+                        await setDoc(docRef, { units: JSON.stringify(units) });
+                        console.log("Units saved successfully.");
+                    } catch (saveError) {
+                        console.error("Firestore save failed:", saveError);
+                        console.warn("Continuing without saving to cache.");
                     }
                     
-                    const units = JSON.parse(jsonMatch[0]);
-                    
-                    // Save the units to Firestore before returning them
-                    await setDoc(docRef, { units: JSON.stringify(units) });
                     return units;
 
                 } catch (error) {
                     console.error("API error fetching units:", error);
                     // Fallback to generic units on failure
+                    console.warn("Returning fallback units due to API error.");
                     const fallbackUnits = [
                         { label: "Unit 1", value: "Unit 1" },
                         { label: "Unit 2", value: "Unit 2" },
