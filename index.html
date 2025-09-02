@@ -266,47 +266,49 @@
 
         const userIdDisplay = document.getElementById('userIdDisplay');
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-
+        const rawFirebaseConfig = typeof __firebase_config !== 'undefined' ? __firebase_config : null;
+        
         let app, db, auth;
         let currentUserId = null;
         let isFirebaseReady = false;
-
+        
+        // This function will handle all the Firebase and Authentication setup
         async function initializeFirebase() {
             try {
-                if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
-                    app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-
-                    await new Promise((resolve) => {
-                        onAuthStateChanged(auth, async (user) => {
-                            if (user) {
-                                console.log("User is already authenticated.");
-                                currentUserId = user.uid;
-                                resolve();
-                            } else {
-                                if (typeof __initial_auth_token !== 'undefined') {
-                                    await signInWithCustomToken(auth, __initial_auth_token);
-                                    currentUserId = auth.currentUser.uid;
-                                    console.log("Signed in with custom token.");
-                                } else {
-                                    await signInAnonymously(auth);
-                                    currentUserId = auth.currentUser.uid;
-                                    console.log("Signed in anonymously.");
-                                }
-                                resolve();
-                            }
-                        });
-                    });
-
-                    userIdDisplay.textContent = currentUserId;
-                    isFirebaseReady = true;
-                    console.log("Firebase and authentication are now ready.");
-                    populateCollegeDropdown();
-                } else {
+                // IMPORTANT: Check if the firebaseConfig exists before parsing
+                if (!rawFirebaseConfig || rawFirebaseConfig.length === 0) {
                     throw new Error("Firebase config is missing.");
                 }
+
+                const firebaseConfig = JSON.parse(rawFirebaseConfig);
+
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Wait for authentication to be complete before doing anything else
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        userIdDisplay.textContent = currentUserId;
+                        isFirebaseReady = true;
+                        console.log("Firebase and authentication are now ready.");
+                        populateCollegeDropdown();
+                    } else {
+                        console.log("User is signed out.");
+                        // Handle the case where the user is signed out
+                    }
+                });
+
+                // Authenticate the user once the app is initialized
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Signed in anonymously.");
+                }
+
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
                 userIdDisplay.textContent = 'Error';
