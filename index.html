@@ -29,7 +29,7 @@
 
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
 
-                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white-500 hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">Middle School</h2>
                 </div>
 
@@ -365,14 +365,15 @@
                 resetQuiz();
             });
 
-            const saveCourseToLocalStorage = (college, major, course) => {
-                const courses = JSON.parse(localStorage.getItem('courses')) || [];
-                const newCourse = { college, major, name: course };
-                const existingCourse = courses.find(c => c.name === course);
-                if (!existingCourse) {
-                    courses.push(newCourse);
-                    localStorage.setItem('courses', JSON.stringify(courses));
-                }
+            const saveCourseUnitsToLocalStorage = (course, units) => {
+                const unitsCache = JSON.parse(localStorage.getItem('unitsCache')) || {};
+                unitsCache[course.trim()] = units;
+                localStorage.setItem('unitsCache', JSON.stringify(unitsCache));
+            };
+
+            const getCourseUnitsFromLocalStorage = (course) => {
+                const unitsCache = JSON.parse(localStorage.getItem('unitsCache')) || {};
+                return unitsCache[course.trim()];
             };
 
             setCourseBtn.addEventListener('click', async () => {
@@ -391,19 +392,30 @@
                 unitDropdown.innerHTML = '<option value="">Loading units...</option>';
                 unitDropdown.disabled = true;
 
-                saveCourseToLocalStorage(college, major, course);
+                const cachedUnits = getCourseUnitsFromLocalStorage(course);
+                if (cachedUnits) {
+                    const unitOptions = [{ label: "Select Unit", value: "" }, ...cachedUnits.map(unit => ({
+                        label: unit,
+                        value: unit
+                    }))];
+                    setOptions(unitDropdown, unitOptions);
+                    unitDropdown.disabled = false;
+                    courseHeader.textContent = `${college} • ${major} • ${course}`;
+                    courseHeader.classList.remove('hidden');
+                    backToCoursesBtn.classList.remove('hidden');
+                    return;
+                }
                 
                 courseHeader.textContent = `${college} • ${major} • ${course}`;
                 courseHeader.classList.remove('hidden');
                 backToCoursesBtn.classList.remove('hidden');
 
                 try {
-                    const prompt = `Generate a list of 5 to 7 logical units for the following course, major, and college. Respond as a JSON array of strings, where each string is the unit name.
-                    - College: ${college}
-                    - Major: ${major}
-                    - Course: ${course}
+                    const prompt = `You are a college professor listing 12 detailed and specific unit names for the course "${course}" offered at ${college} for a ${major} major.
                     
-                    Example response format: ["Unit 1: Introduction", "Unit 2: Fundamentals", "Unit 3: Advanced Topics"]`;
+                    Provide ONLY a JSON array of strings with the unit titles. Do NOT include any text or explanation.
+                    
+                    Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
 
                     const payload = {
                         contents: [{ parts: [{ text: prompt }] }],
@@ -435,6 +447,8 @@
                         const jsonString = result.candidates[0].content.parts[0].text;
                         const units = JSON.parse(jsonString);
 
+                        saveCourseUnitsToLocalStorage(course, units);
+                        
                         const unitOptions = [{ label: "Select Unit", value: "" }, ...units.map(unit => ({
                             label: unit,
                             value: unit
@@ -449,7 +463,6 @@
                     console.error("Error generating units:", error);
                     errorMessage.textContent = "Failed to generate units. Please try again.";
                     errorMessage.classList.remove('hidden');
-                    // Fallback to static units
                     const defaultUnits = ["Introduction", "Unit 1", "Unit 2", "Unit 3", "Unit 4"];
                     const unitOptions = [{ label: "Select Unit", value: "" }, ...defaultUnits.map(unit => ({
                         label: unit,
@@ -491,38 +504,88 @@
                 generateBtn.textContent = 'Generating...';
 
                 try {
-                    const prompt = `You are an expert in academic content. Based on the following criteria, generate a single multiple-choice quiz question with exactly one correct answer.
-                    - College: ${college}
-                    - Major: ${major}
-                    - Course: ${course}
-                    - Unit: ${unit}
-                    - Topic: ${topic}
-                    - Difficulty (1-10): ${difficulty}
+                    let category;
+                    if (["Computer Science", "Information Technology", "Management Information Systems", "Engineering", "Supply Chain Management and Logistics", "Textile Engineering"].includes(major)) {
+                        category = "technical";
+                    } else if (["Business Administration", "Business", "Political Science", "Industrial Design"].includes(major)) {
+                        category = "analytical";
+                    } else {
+                        category = "scientific";
+                    }
+
+                    const stylesByCategory = {
+                        technical: [
+                          "Code debugging task",
+                          "Code writing/building task",
+                          "Algorithm optimization",
+                          "System architecture analysis",
+                          "Output prediction from given code"
+                        ],
+                        analytical: [
+                          "Data interpretation",
+                          "Scenario-based problem-solving",
+                          "Case study analysis",
+                          "Process design question",
+                          "Multi-step calculation"
+                        ],
+                        scientific: [
+                          "Experimental design",
+                          "Data/graph interpretation",
+                          "Diagnosis from observations",
+                          "Fieldwork planning",
+                          "Calculation-heavy measurement problem"
+                        ]
+                    };
+
+                    const styleOptions = stylesByCategory[category];
+                    const randomStyle = styleOptions[Math.floor(Math.random() * styleOptions.length)];
+
+                    let difficultyDescription;
+                    if (difficulty >= 1 && difficulty <= 3) {
+                      difficultyDescription = "easy, base-level";
+                    } else if (difficulty >= 4 && difficulty <= 7) {
+                      difficultyDescription = "standard, course-appropriate";
+                    } else if (difficulty >= 8 && difficulty <= 10) {
+                      difficultyDescription = "extremely difficult, complex, or multi-step";
+                    } else {
+                      difficultyDescription = "standard, course-appropriate";
+                    }
+
+                    const prompt = `You are a college professor designing a rigorous, course-appropriate multiple-choice quiz question.
                     
-                    Provide the response as a JSON object with the following schema:
-                    {
-                        "question": "The quiz question text.",
-                        "options": ["Option A", "Option B", "Option C", "Option D"],
-                        "answer": "The correct answer, which must be one of the options."
-                    }`;
+                    Generate an **${difficultyDescription}** question in the style of a **${randomStyle.toLowerCase()}**.
+                    
+                    Major: ${major}
+                    Course: ${course}
+                    Unit: ${unit}
+                    Topic: ${topic}
+                    
+                    Create ONE multiple-choice question that:
+                    - **Bases the entire question's scenario on a verifiable, interesting fact about the chosen ${topic}.**
+                    - **Does NOT explicitly state "Fun fact:"**. Instead, the fact must be woven seamlessly into the problem statement.
+                    - question output format should vary depending on ${stylesByCategory} and ${difficulty} offering word problems, code block debugging/correcting, math problems, etc. 
+                    - Requires the student to apply concepts from the ${course} and ${unit} to solve a problem related to that fact.
+                    - Matches the academic depth of an actual quiz, test, or homework question in a ${course} course at ${college}.
+                    - Is specific to the major and reflects the skills actually assessed in the unit "${unit}".
+                    - Avoids generic definitions; instead, focus on real techniques, methods, problem-solving, or analysis.
+                    - Uses real academic language and structure used in college assessments.
+                    - Provides 4 answer choices labeled A–D, with one correct and clearly defensible answer.
+                    - Does NOT assume knowledge outside of what’s commonly taught in the selected unit/topic.
+                    - If the topic is repeated, use a different fact for the new question.
+                    
+                    Return ONLY in this format:
+                    
+                    Question: [Your question here]
+                    A. [Option A]
+                    B. [Option B]
+                    C. [Option C]
+                    D. [Option D]
+                    Correct Answer: [A/B/C/D]`;
                     
                     const payload = {
                         contents: [{ parts: [{ text: prompt }] }],
                         generationConfig: {
-                            responseMimeType: "application/json",
-                            responseSchema: {
-                                type: "OBJECT",
-                                properties: {
-                                    "question": { "type": "STRING" },
-                                    "options": {
-                                        "type": "ARRAY",
-                                        "items": { "type": "STRING" },
-                                        "minItems": 4,
-                                        "maxItems": 4
-                                    },
-                                    "answer": { "type": "STRING" }
-                                }
-                            }
+                            responseMimeType: "text/plain",
                         }
                     };
                     
@@ -542,16 +605,21 @@
                     const result = await response.json();
                     
                     if (result.candidates && result.candidates.length > 0 && result.candidates[0].content) {
-                        const jsonString = result.candidates[0].content.parts[0].text;
-                        const quizData = JSON.parse(jsonString);
+                        const content = result.candidates[0].content.parts[0].text;
                         
-                        questionText.textContent = quizData.question;
-                        answerTextA.textContent = quizData.options[0];
-                        answerTextB.textContent = quizData.options[1];
-                        answerTextC.textContent = quizData.options[2];
-                        answerTextD.textContent = quizData.options[3];
-                        correctAnswer = quizData.answer;
-                        
+                        const lines = content.trim().split('\n');
+                        const question = lines.find(line => line.startsWith('Question:')).replace('Question:', '').trim();
+                        const options = lines.filter(line => /^[A-D]\./.test(line)).map(line => line.substring(3).trim());
+                        const answerLine = lines.find(line => line.startsWith('Correct Answer:'));
+                        const answer = answerLine ? answerLine.substring(answerLine.indexOf(':') + 1).trim() : '';
+
+                        questionText.textContent = question;
+                        answerTextA.textContent = options[0];
+                        answerTextB.textContent = options[1];
+                        answerTextC.textContent = options[2];
+                        answerTextD.textContent = options[3];
+                        correctAnswer = options[answer.charCodeAt(0) - 65]; // Convert A/B/C/D to array index 0/1/2/3
+
                         showAnswerButtons();
                         questionText.classList.remove('hidden');
 
