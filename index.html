@@ -46,17 +46,17 @@
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
 
                 <!-- Middle School Square -->
-                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white hover:bg-white text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">Middle School</h2>
                 </div>
 
                 <!-- High School Square -->
-                <div id="high-school-square" data-target="high-school-section" class="interactive-square cursor-pointer bg-white hover:bg-white text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                <div id="high-school-square" data-target="high-school-section" class="interactive-square cursor-pointer bg-purple-500 hover:bg-purple-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">High School</h2>
                 </div>
 
                 <!-- College Courses Square -->
-                <div id="college-courses-square" data-target="college-courses-section" class="interactive-square cursor-pointer bg-white hover:bg-white text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
+                <div id="college-courses-square" data-target="college-courses-section" class="interactive-square cursor-pointer bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">College Courses</h2>
                 </div>
 
@@ -673,11 +673,14 @@
                         throw new Error("Invalid response format from API.");
                     }
                     
-                    // Sanitize the raw text to ensure it's valid JSON
                     const rawText = contentPart.text;
-                    const sanitizedText = rawText.replace(/^```json\s*|^\s*```|`{3}/g, '').trim();
+                    const jsonMatch = rawText.match(/\[\s*\{[\s\S]*\}\s*\]/);
 
-                    const units = JSON.parse(sanitizedText);
+                    if (!jsonMatch) {
+                        throw new Error("No valid JSON array found in the response.");
+                    }
+                    
+                    const units = JSON.parse(jsonMatch[0]);
                     
                     // Save the units to Firestore before returning them
                     await setDoc(docRef, { units: JSON.stringify(units) });
@@ -787,4 +790,3 @@
     </script>
 </body>
 </html>
-
