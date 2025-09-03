@@ -76,6 +76,48 @@ async function callOpenAI(prompt) {
   return data.choices?.[0]?.message?.content;
 }
 
+// New, more robust function to get units with a guaranteed fallback
+async function getUnitsWithFallback(basePrompt) {
+  try {
+    const content = await callOpenAI(basePrompt);
+    if (content) {
+      const jsonMatch = content.match(/\[.*\]/s);
+      if (jsonMatch) {
+        const units = JSON.parse(jsonMatch[0]);
+        if (!isGenericUnits(units)) {
+          return units;
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Failed to generate units from OpenAI:", e.message);
+  }
+
+  // If the first attempt fails or returns generic units, try again with a stronger prompt
+  const strongerPrompt = `${basePrompt}\n\nReminder: DO NOT return generic labels like "Unit 1". Provide real descriptive unit titles specific to the course.`;
+  try {
+    const content = await callOpenAI(strongerPrompt);
+    if (content) {
+      const jsonMatch = content.match(/\[.*\]/s);
+      if (jsonMatch) {
+        const units = JSON.parse(jsonMatch[0]);
+        if (!isGenericUnits(units)) {
+          return units;
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Failed to generate units with stronger prompt:", e.message);
+  }
+
+  // Final fallback to generic units
+  return [
+    { label: "Unit 1", value: "Unit 1" },
+    { label: "Unit 2", value: "Unit 2" },
+    { label: "Unit 3", value: "Unit 3" }
+  ];
+}
+
 export default async function handler(req, res) {
   const { type } = req.query;
 
@@ -88,63 +130,12 @@ export default async function handler(req, res) {
       }
 
       const courseTrimmed = course.trim();
-
       const basePrompt = `You are a college professor listing 12 detailed and specific unit names for the course "${courseTrimmed}" offered at ${college} for a ${major} major.
-
 Provide ONLY a JSON array of objects with "label" and "value" fields for each unit. Do NOT include any text or explanation.
-
 Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
 
-      let units = [];
-
-      try {
-        const content = await callOpenAI(basePrompt);
-        if (content) {
-          const jsonMatch = content.match(/\[.*\]/s);
-          if (jsonMatch) {
-            units = JSON.parse(jsonMatch[0]);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to generate units from OpenAI:", e.message);
-        // Fallback to generic units in case of an error
-        units = [
-          { label: "Unit 1", value: "Unit 1" },
-          { label: "Unit 2", value: "Unit 2" },
-          { label: "Unit 3", value: "Unit 3" }
-        ];
-      }
+      const units = await getUnitsWithFallback(basePrompt);
       
-      // If the generated units are generic, try again with a stronger prompt
-      if (!units || isGenericUnits(units)) {
-        const strongerPrompt = `${basePrompt}\n\nReminder: DO NOT return generic labels like "Unit 1". Provide real descriptive unit titles specific to the course.`;
-        try {
-          const content = await callOpenAI(strongerPrompt);
-          if (content) {
-            const jsonMatch = content.match(/\[.*\]/s);
-            if (jsonMatch) {
-              units = JSON.parse(jsonMatch[0]);
-            }
-          }
-        } catch (e) {
-          console.error("Failed to generate units with stronger prompt:", e.message);
-          // Fallback to generic units again
-          units = [
-            { label: "Unit 1", value: "Unit 1" },
-            { label: "Unit 2", value: "Unit 2" },
-            { label: "Unit 3", value: "Unit 3" }
-          ];
-        }
-      }
-
-      if (!units || isGenericUnits(units)) {
-        units = [
-          { label: "Unit 1", value: "Unit 1" },
-          { label: "Unit 2", value: "Unit 2" },
-          { label: "Unit 3", value: "Unit 3" }
-        ];
-      }
-
       return res.status(200).json({ units });
     }
 
