@@ -45,10 +45,11 @@
 
         <p id="errorMessage" class="text-red-500 text-sm text-center mb-4 hidden"></p>
 
-        <div id="quizSection" class="border-t pt-6 mt-6 border-gray-200">
+        <div id="unitDropdownContainer" class="border-t pt-6 mt-6 border-gray-200">
             <h2 id="courseHeader" class="text-xl font-semibold text-center text-gray-800 mb-4 hidden"></h2>
             
-            <div class="mb-4 hidden" id="unitDropdown">
+            <!-- FIX: Added a new ID for the inner container -->
+            <div id="unitDropdownDiv" class="mb-4 hidden">
                 <label for="unitDropdown" class="block text-sm font-medium text-gray-700">Select Unit:</label>
                 <select id="unitDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></select>
             </div>
@@ -91,12 +92,6 @@
     </div>
 
     <script>
-        // Note: This API key is exposed. In a production environment, it should be stored securely on a server.
-        const OPENAI_API_KEY = "sk-proj-761h8f7J9Yj3e4E8w7jT2z0h1d7G7C9F9l6c4O7B3n6M3j7P";
-        
-        let correctAnswer = '';
-        let answerOptions = {};
-
         const collegeMajors = {
           "Coastal Carolina University": ["Marine Science", "Business Administration", "Computer Science", "Exercise and Sport Science", "Physical Education"],
           "North Carolina State University": ["Engineering", "Computer Science", "Agricultural Sciences", "Supply Chain Management and Logistics", "Textile Engineering"],
@@ -106,7 +101,8 @@
         };
 
         function hideAllQuizElements() {
-            document.getElementById('unitDropdown').classList.add('hidden');
+            document.getElementById('unitDropdownContainer').classList.add('hidden');
+            document.getElementById('unitDropdownDiv').classList.add('hidden');
             document.getElementById('topicInput').classList.add('hidden');
             document.getElementById('generateBtnContainer').classList.add('hidden');
             document.getElementById('difficultySlider').classList.add('hidden');
@@ -153,101 +149,84 @@
             });
             majorDropdown.disabled = false;
         }
-
-        async function callOpenAIForUnits(prompt) {
-            const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${OPENAI_API_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    model: "gpt-4o-mini",
-                    messages: [
-                        { role: "system", content: "You are an expert college professor who ONLY provides a JSON array of specific, non-generic unit titles." },
-                        { role: "user", content: prompt }
-                    ],
-                    temperature: 0.7,
-                    max_tokens: 1000
-                })
-            });
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
-            }
-            const data = await response.json();
-            return data.choices?.[0]?.message?.content;
-        }
         
-        async function callOpenAIForQuestion(prompt) {
-            const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${OPENAI_API_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    model: "gpt-4o-mini",
-                    messages: [
-                        { role: "system", content: "You are a college professor who provides a multiple choice question in the specified format." },
-                        { role: "user", content: prompt }
-                    ],
-                    temperature: 0.7,
-                    max_tokens: 1000
-                })
+        async function callGeminiApiForUnits(prompt) {
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "ARRAY",
+                        items: {
+                            type: "OBJECT",
+                            properties: {
+                                label: { "type": "STRING" },
+                                value: { "type": "STRING" }
+                            },
+                            required: ["label", "value"]
+                        }
+                    }
+                }
+            };
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
+
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+                throw new Error(`API error: ${response.status} - ${await response.text()}`);
             }
-            const data = await response.json();
-            return data.choices?.[0]?.message?.content;
+
+            const result = await response.json();
+            const jsonPart = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!jsonPart) {
+                throw new Error("Invalid response format from API");
+            }
+
+            return JSON.parse(jsonPart);
         }
 
-        function isGenericUnits(units) {
-            if (!Array.isArray(units)) return true;
-            if (units.length < 2) return true;
-            const genericLabels = new Set(["Unit 1", "Unit 2", "Unit 3"]);
-            return units.every(u => genericLabels.has(u.label) && u.label === u.value);
-        }
+        async function callGeminiApiForQuestion(prompt) {
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            question: { "type": "STRING" },
+                            options: {
+                                type: "ARRAY",
+                                items: { "type": "STRING" }
+                            },
+                            correctAnswerIndex: { "type": "NUMBER" }
+                        },
+                        required: ["question", "options", "correctAnswerIndex"]
+                    }
+                }
+            };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-        async function getUnitsWithFallback(basePrompt) {
-            try {
-                const content = await callOpenAIForUnits(basePrompt);
-                if (content) {
-                    const jsonMatch = content.match(/\[.*\]/s);
-                    if (jsonMatch) {
-                        const units = JSON.parse(jsonMatch[0]);
-                        if (!isGenericUnits(units)) {
-                            return units;
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error("Failed to generate units from OpenAI:", e.message);
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status} - ${await response.text()}`);
             }
-            
-            const strongerPrompt = `${basePrompt}\n\nReminder: DO NOT return generic labels like "Unit 1". Provide real descriptive unit titles specific to the course.`;
-            try {
-                const content = await callOpenAIForUnits(strongerPrompt);
-                if (content) {
-                    const jsonMatch = content.match(/\[.*\]/s);
-                    if (jsonMatch) {
-                        const units = JSON.parse(jsonMatch[0]);
-                        if (!isGenericUnits(units)) {
-                            return units;
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error("Failed to generate units with stronger prompt:", e.message);
+
+            const result = await response.json();
+            const jsonPart = result.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!jsonPart) {
+                throw new Error("Invalid response format from API");
             }
-            
-            return [
-                { label: "Unit 1", value: "Unit 1" },
-                { label: "Unit 2", value: "Unit 2" },
-                { label: "Unit 3", value: "Unit 3" }
-            ];
+            return JSON.parse(jsonPart);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -280,27 +259,26 @@
                     }
 
                     document.getElementById('errorMessage').classList.add('hidden');
-                    const unitDropdown = document.getElementById('unitDropdown');
-                    unitDropdown.innerHTML = '<option value="">Loading units...</option>';
-                    unitDropdown.disabled = true;
+                    const unitDropdownEl = document.getElementById('unitDropdown');
+                    unitDropdownEl.innerHTML = '<option value="">Loading units...</option>';
+                    unitDropdownEl.disabled = true;
                     
-                    const courseTrimmed = course.trim();
-                    const basePrompt = `You are a college professor listing 12 detailed and specific unit names for the course "${courseTrimmed}" offered at ${college} for a ${major} major.
-                    Provide ONLY a JSON array of objects with "label" and "value" fields for each unit. Do NOT include any text or explanation.
-                    Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
-
-                    const units = await getUnitsWithFallback(basePrompt);
-
+                    const prompt = `Generate 10 detailed and specific unit names for the course "${course}" offered at ${college} for a ${major} major.
+                                     Return only a JSON array of objects with "label" and "value" fields.`;
+                    
+                    const units = await callGeminiApiForUnits(prompt);
+                    
                     if (units.length > 0) {
-                        unitDropdown.innerHTML = '<option value="">Select Unit</option>';
+                        unitDropdownEl.innerHTML = '<option value="">Select Unit</option>';
                         units.forEach(unit => {
                             const opt = document.createElement('option');
                             opt.value = unit.value;
                             opt.textContent = unit.label;
-                            unitDropdown.appendChild(opt);
+                            unitDropdownEl.appendChild(opt);
                         });
-                        unitDropdown.disabled = false;
-                        unitDropdown.classList.remove('hidden');
+                        unitDropdownEl.disabled = false;
+                        document.getElementById('unitDropdownContainer').classList.remove('hidden');
+                        document.getElementById('unitDropdownDiv').classList.remove('hidden');
                         document.getElementById('topicInput').classList.remove('hidden');
                         document.getElementById('difficultySlider').classList.remove('hidden');
                         document.getElementById('generateBtnContainer').classList.remove('hidden');
@@ -342,15 +320,9 @@
                     document.getElementById('feedbackText').classList.add('hidden');
 
                     const stylesByCategory = {
-                      technical: [
-                        "Code debugging task", "Code writing/building task", "Algorithm optimization", "System architecture analysis", "Output prediction from given code"
-                      ],
-                      analytical: [
-                        "Data interpretation", "Scenario-based problem-solving", "Case study analysis", "Process design question", "Multi-step calculation"
-                      ],
-                      scientific: [
-                        "Experimental design", "Data/graph interpretation", "Diagnosis from observations", "Fieldwork planning", "Calculation-heavy measurement problem"
-                      ]
+                      technical: [ "Code debugging", "Code writing", "Algorithm optimization", "System architecture analysis", "Output prediction" ],
+                      analytical: [ "Data interpretation", "Scenario-based problem-solving", "Case study analysis", "Process design", "Multi-step calculation" ],
+                      scientific: [ "Experimental design", "Data/graph interpretation", "Diagnosis from observations", "Fieldwork planning", "Calculation-heavy measurement problem" ]
                     };
 
                     let category;
@@ -371,75 +343,36 @@
                     else if (difficulty >= 8 && difficulty <= 10) difficultyDescription = "extremely difficult, complex, or multi-step";
                     else difficultyDescription = "standard, course-appropriate";
 
-                    const prompt = `You are a college professor designing a rigorous, course-appropriate multiple-choice quiz question.
-                    
-                    Generate an **${difficultyDescription}** question in the style of a **${randomStyle.toLowerCase()}**.
-                    
-                    Major: ${major}
-                    Course: ${course}
-                    Unit: ${unit}
-                    Topic: ${topic}
-                    
-                    Create ONE multiple-choice question that:
-                    - **Bases the entire question's scenario on a verifiable, interesting fact about the chosen ${topic}.**
-                    - **Does NOT explicitly state "Fun fact:"**. Instead, the fact must be woven seamlessly into the problem statement.
-                    - question output format should vary depending on ${stylesByCategory} and ${difficulty} offering word problems, code block debugging/correcting, math problems, etc. 
-                    - Requires the student to apply concepts from the ${course} and ${unit} to solve a problem related to that fact.
-                    - Matches the academic depth of an actual quiz, test, or homework question in a ${course} course at ${college}.
-                    - Is specific to the major and reflects the skills actually assessed in the unit "${unit}".
-                    - Avoids generic definitions; instead, focus on real techniques, methods, problem-solving, or analysis.
-                    - Uses real academic language and structure used in college assessments.
-                    - Provides 4 answer choices labeled A–D, with one correct and clearly defensible answer.
-                    - Does NOT assume knowledge outside of what’s commonly taught in the selected unit/topic.
-                    - If the topic is repeated, use a different fact for the new question.
-                    
-                    Return ONLY in this format:
-                    Question: [Your question here]
-                    A. [Option A]
-                    B. [Option B]
-                    C. [Option C]
-                    D. [Option D]
-                    Correct Answer: [A/B/C/D]`;
+                    const prompt = `Generate an **${difficultyDescription}** question in the style of a **${randomStyle.toLowerCase()}**. Major: ${major}, Course: ${course}, Unit: ${unit}, Topic: ${topic}.
+                    The question should be based on a verifiable fact about the topic, woven seamlessly into the problem statement.
+                    The question must require applying concepts from the course.
+                    Provide 4 answer choices.
+                    Return ONLY a JSON object with 'question' (string), 'options' (array of 4 strings), and 'correctAnswerIndex' (a number from 0-3).`;
 
-                    const content = await callOpenAIForQuestion(prompt);
+                    const quizData = await callGeminiApiForQuestion(prompt);
 
-                    const correctIndex = content.indexOf("Correct Answer:");
-                    if (correctIndex === -1) throw new Error("Invalid response format: 'Correct Answer:' not found.");
-
-                    const rawQuestionAndOptions = content.substring(0, correctIndex).trim();
-                    const rawCorrectAnswer = content.substring(correctIndex + "Correct Answer:".length).trim();
-
-                    const lines = rawQuestionAndOptions.split('\n');
-                    const questionIndex = lines.findIndex(line => line.toLowerCase().startsWith("question:"));
-                    const optionAIndex = lines.findIndex(line => line.startsWith("A."));
-
-                    if (questionIndex === -1 || optionAIndex === -1) throw new Error("Invalid response format: Question or options not found.");
-
-                    const questionLines = lines.slice(questionIndex, optionAIndex);
-                    const questionText = questionLines.join('\n').replace(/^(Question|Q)\.\s*/i, '').trim();
-                    const optionsText = lines.slice(optionAIndex).join('\n');
-
-                    answerOptions = {};
-                    const optionMatches = optionsText.match(/[A-D]\.\s*[\s\S]+?(?=\n[B-D]\.|$)/g);
-                    if (optionMatches) {
-                        optionMatches.forEach(match => {
-                            const key = match[0];
-                            const value = match.substring(2).trim();
-                            answerOptions[key] = value;
-                        });
-                    }
-
-                    correctAnswer = rawCorrectAnswer.toUpperCase().match(/[A-D]/)[0];
+                    const questionText = quizData.question;
+                    const options = quizData.options;
+                    const correctIndex = quizData.correctAnswerIndex;
+                    const correctLetter = ['A', 'B', 'C', 'D'][correctIndex];
 
                     document.getElementById('questionText').textContent = questionText;
                     document.getElementById('questionText').classList.remove('hidden');
                     showAnswerButtons();
 
-                    ['A', 'B', 'C', 'D'].forEach(letter => {
+                    ['A', 'B', 'C', 'D'].forEach((letter, index) => {
                         const textEl = document.getElementById(`answerText${letter}`);
-                        textEl.textContent = answerOptions[letter] || '';
+                        textEl.textContent = options[index] || '';
                         textEl.classList.remove('hidden');
                     });
+                    
+                    answerOptions = {
+                        'A': options[0],
+                        'B': options[1],
+                        'C': options[2],
+                        'D': options[3]
+                    };
+                    correctAnswer = correctLetter;
 
                     document.getElementById('feedbackText').classList.add('hidden');
 
