@@ -91,6 +91,10 @@
     </div>
 
     <script>
+        // WARNING: This API key is exposed in the client-side code for demonstration purposes.
+        // In a production environment, this key should be stored securely on a server.
+        const OPENAI_API_KEY = "sk-proj-761h8f7J9Yj3e4E8w7jT2z0h1d7G7C9F9l6c4O7B3n6M3j7P";
+        
         let correctAnswer = '';
         let answerOptions = {};
 
@@ -151,6 +155,77 @@
             majorDropdown.disabled = false;
         }
 
+        async function callOpenAI(prompt) {
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${OPENAI_API_KEY}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    model: "gpt-4o-mini",
+                    messages: [
+                        { role: "system", content: "You are an expert college professor who ONLY provides a JSON array of specific, non-generic unit titles." },
+                        { role: "user", content: prompt }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 1000
+                })
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
+            }
+            const data = await response.json();
+            return data.choices?.[0]?.message?.content;
+        }
+
+        function isGenericUnits(units) {
+            if (!Array.isArray(units)) return true;
+            if (units.length < 2) return true;
+            const genericLabels = new Set(["Unit 1", "Unit 2", "Unit 3"]);
+            return units.every(u => genericLabels.has(u.label) && u.label === u.value);
+        }
+
+        async function getUnitsWithFallback(basePrompt) {
+            try {
+                const content = await callOpenAI(basePrompt);
+                if (content) {
+                    const jsonMatch = content.match(/\[.*\]/s);
+                    if (jsonMatch) {
+                        const units = JSON.parse(jsonMatch[0]);
+                        if (!isGenericUnits(units)) {
+                            return units;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to generate units from OpenAI:", e.message);
+            }
+            
+            const strongerPrompt = `${basePrompt}\n\nReminder: DO NOT return generic labels like "Unit 1". Provide real descriptive unit titles specific to the course.`;
+            try {
+                const content = await callOpenAI(strongerPrompt);
+                if (content) {
+                    const jsonMatch = content.match(/\[.*\]/s);
+                    if (jsonMatch) {
+                        const units = JSON.parse(jsonMatch[0]);
+                        if (!isGenericUnits(units)) {
+                            return units;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to generate units with stronger prompt:", e.message);
+            }
+            
+            return [
+                { label: "Unit 1", value: "Unit 1" },
+                { label: "Unit 2", value: "Unit 2" },
+                { label: "Unit 3", value: "Unit 3" }
+            ];
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             populateCollegeDropdown();
             hideAllQuizElements();
@@ -184,20 +259,13 @@
                     const unitDropdown = document.getElementById('unitDropdown');
                     unitDropdown.innerHTML = '<option value="">Loading units...</option>';
                     unitDropdown.disabled = true;
-
-                    const response = await fetch('/api/college?type=units', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ college, major, course })
-                    });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`API error: ${response.status} - ${errorText}`);
-                    }
                     
-                    const data = await response.json();
-                    const units = data.units;
+                    const courseTrimmed = course.trim();
+                    const basePrompt = `You are a college professor listing 12 detailed and specific unit names for the course "${courseTrimmed}" offered at ${college} for a ${major} major.
+                    Provide ONLY a JSON array of objects with "label" and "value" fields for each unit. Do NOT include any text or explanation.
+                    Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
+
+                    const units = await getUnitsWithFallback(basePrompt);
 
                     if (units.length > 0) {
                         unitDropdown.innerHTML = '<option value="">Select Unit</option>';
@@ -249,19 +317,67 @@
                     hideAnswerTexts();
                     document.getElementById('feedbackText').classList.add('hidden');
 
-                    const response = await fetch('/api/college?type=quiz', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ college, major, course, unit, topic, difficulty })
-                    });
-                    
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`API error: ${response.status} - ${errorText}`);
+                    const stylesByCategory = {
+                      technical: [
+                        "Code debugging task", "Code writing/building task", "Algorithm optimization", "System architecture analysis", "Output prediction from given code"
+                      ],
+                      analytical: [
+                        "Data interpretation", "Scenario-based problem-solving", "Case study analysis", "Process design question", "Multi-step calculation"
+                      ],
+                      scientific: [
+                        "Experimental design", "Data/graph interpretation", "Diagnosis from observations", "Fieldwork planning", "Calculation-heavy measurement problem"
+                      ]
+                    };
+
+                    let category;
+                    if (["Computer Science", "Information Technology", "Management Information Systems", "Engineering", "Supply Chain Management and Logistics", "Textile Engineering"].includes(major)) {
+                      category = "technical";
+                    } else if (["Business Administration", "Business", "Political Science", "Industrial Design"].includes(major)) {
+                      category = "analytical";
+                    } else {
+                      category = "scientific";
                     }
 
-                    const data = await response.json();
-                    const content = data.question;
+                    const styleOptions = stylesByCategory[category];
+                    const randomStyle = styleOptions[Math.floor(Math.random() * styleOptions.length)];
+
+                    let difficultyDescription;
+                    if (difficulty >= 1 && difficulty <= 3) difficultyDescription = "easy, base-level";
+                    else if (difficulty >= 4 && difficulty <= 7) difficultyDescription = "standard, course-appropriate";
+                    else if (difficulty >= 8 && difficulty <= 10) difficultyDescription = "extremely difficult, complex, or multi-step";
+                    else difficultyDescription = "standard, course-appropriate";
+
+                    const prompt = `You are a college professor designing a rigorous, course-appropriate multiple-choice quiz question.
+                    
+                    Generate an **${difficultyDescription}** question in the style of a **${randomStyle.toLowerCase()}**.
+                    
+                    Major: ${major}
+                    Course: ${course}
+                    Unit: ${unit}
+                    Topic: ${topic}
+                    
+                    Create ONE multiple-choice question that:
+                    - **Bases the entire question's scenario on a verifiable, interesting fact about the chosen ${topic}.**
+                    - **Does NOT explicitly state "Fun fact:"**. Instead, the fact must be woven seamlessly into the problem statement.
+                    - question output format should vary depending on ${stylesByCategory} and ${difficulty} offering word problems, code block debugging/correcting, math problems, etc. 
+                    - Requires the student to apply concepts from the ${course} and ${unit} to solve a problem related to that fact.
+                    - Matches the academic depth of an actual quiz, test, or homework question in a ${course} course at ${college}.
+                    - Is specific to the major and reflects the skills actually assessed in the unit "${unit}".
+                    - Avoids generic definitions; instead, focus on real techniques, methods, problem-solving, or analysis.
+                    - Uses real academic language and structure used in college assessments.
+                    - Provides 4 answer choices labeled A–D, with one correct and clearly defensible answer.
+                    - Does NOT assume knowledge outside of what’s commonly taught in the selected unit/topic.
+                    - If the topic is repeated, use a different fact for the new question.
+                    
+                    Return ONLY in this format:
+                    Question: [Your question here]
+                    A. [Option A]
+                    B. [Option B]
+                    C. [Option C]
+                    D. [Option D]
+                    Correct Answer: [A/B/C/D]`;
+
+                    const content = await callOpenAI(prompt);
 
                     const correctIndex = content.indexOf("Correct Answer:");
                     if (correctIndex === -1) throw new Error("Invalid response format: 'Correct Answer:' not found.");
