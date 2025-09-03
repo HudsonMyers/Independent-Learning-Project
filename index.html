@@ -1,410 +1,246 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Independent Learning Project</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-    </style>
-</head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
-    <div class="bg-white shadow-xl rounded-lg p-8 w-full max-w-2xl">
-        <h1 class="text-3xl font-bold text-center text-indigo-800 mb-6">Independent Learning Project</h1>
+// singlePageApp.js
+import { getCourseUnits, generateCollegeQuizQuestion } from 'backend/College/openaiCOLLEGE.jsw';
 
-        <div class="mb-4">
-            <label for="collegeDropdown" class="block text-sm font-medium text-gray-700">Select College:</label>
-            <select id="collegeDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <option value="">Select College</option>
-            </select>
-        </div>
+let correctAnswer = '';
+let answerOptions = {};
 
-        <div class="mb-4">
-            <label for="majorDropdown" class="block text-sm font-medium text-gray-700">Select Major:</label>
-            <select id="majorDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" disabled>
-                <option value="">Select Major</option>
-            </select>
-        </div>
+const collegeMajors = {
+  "Coastal Carolina University": [
+    "Marine Science",
+    "Business Administration",
+    "Computer Science",
+    "Exercise and Sport Science",
+    "Physical Education"
+  ],
+  "North Carolina State University": [
+    "Engineering",
+    "Computer Science",
+    "Agricultural Sciences",
+    "Supply Chain Management and Logistics",
+    "Textile Engineering"
+  ],
+  "University of Alabama": [
+    "Political Science",
+    "Nursing",
+    "Business",
+    "Management Information Systems",
+    "Psychology"
+  ],
+  "Wake Technical Community College": [
+    "Liberal Arts",
+    "Information Technology",
+    "Business",
+    "Registered Nursing",
+    "Construction",
+    "GM ASEP"
+  ],
+  "Georgia Institute of Technology": [
+    "Aerospace Engineering",
+    "Computer Science",
+    "Industrial Design",
+    "Biomedical Engineering"
+  ]
+};
 
-        <div class="mb-4">
-            <label for="courseInput" class="block text-sm font-medium text-gray-700">Course Name or Code:</label>
-            <input type="text" id="courseInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., Intro to Psychology">
-        </div>
+function timeout(ms) {
+  return new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), ms));
+}
 
-        <div class="flex justify-center mb-6">
-            <button id="setCourse" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out">Set Course</button>
-        </div>
+$w.onReady(() => {
+  populateCollegeDropdown();
+  hideAllQuizElements();
 
-        <p id="errorMessage" class="text-red-500 text-sm text-center mb-4 hidden"></p>
+  $w('#collegeDropdown').onChange(() => {
+    const selectedCollege = $w('#collegeDropdown').value;
+    if (selectedCollege) {
+      populateMajorDropdown(selectedCollege);
+    } else {
+      $w('#majorDropdown').options = [{ label: "Select Major", value: "" }];
+      $w('#majorDropdown').value = "";
+      $w('#majorDropdown').placeholder = "Select Major";
+      $w('#majorDropdown').disable();
+    }
+    $w('#majorDropdown').value = "";
+    $w('#courseInput').value = "";
+    hideAllQuizElements();
+  });
 
-        <div id="unitDropdownContainer" class="border-t pt-6 mt-6 border-gray-200">
-            <h2 id="courseHeader" class="text-xl font-semibold text-center text-gray-800 mb-4 hidden"></h2>
-            
-            <div id="unitDropdownDiv" class="mb-4 hidden">
-                <label for="unitDropdown" class="block text-sm font-medium text-gray-700">Select Unit:</label>
-                <select id="unitDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></select>
-            </div>
-            
-            <div class="mb-4 hidden" id="topicInput">
-                <label for="topicInput" class="block text-sm font-medium text-gray-700">Specific Topic:</label>
-                <input type="text" id="topicInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., Cognitive Dissonance">
-            </div>
+  $w('#setCourse').onClick(async () => {
+    try {
+      const college = $w('#collegeDropdown').value;
+      const major = $w('#majorDropdown').value;
+      const course = $w('#courseInput').value.trim();
 
-            <div class="mb-6 hidden" id="difficultySlider">
-                <label for="difficultySldr" class="block text-sm font-medium text-gray-700">Difficulty: <span id="difficultyValue">5</span></label>
-                <input type="range" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="difficultySldr">
-            </div>
-            
-            <div class="flex justify-center hidden" id="generateBtnContainer">
-                <button id="generateBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out">Generate Question</button>
-            </div>
+      if (!college || !major || !course) {
+        $w('#errorMessage').text = "Please complete all fields to set the course.";
+        $w('#errorMessage').show();
+        hideAllQuizElements();
+        return;
+      }
 
-            <div id="quizContent" class="mt-6">
-                <p id="questionText" class="text-lg font-medium text-gray-900 mb-4 hidden"></p>
-                
-                <div id="answerButtons" class="space-y-4">
-                    <button id="answerBtnA" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
-                        <span id="answerTextA" class="font-medium text-left block hidden"></span>
-                    </button>
-                    <button id="answerBtnB" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
-                        <span id="answerTextB" class="font-medium text-left block hidden"></span>
-                    </button>
-                    <button id="answerBtnC" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
-                        <span id="answerTextC" class="font-medium text-left block hidden"></span>
-                    </button>
-                    <button id="answerBtnD" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
-                        <span id="answerTextD" class="font-medium text-left block hidden"></span>
-                    </button>
-                </div>
+      $w('#errorMessage').hide();
+      $w('#unitDropdown').options = [{ label: "Loading units...", value: "" }];
+      $w('#unitDropdown').disable();
+      
+      const units = await getCourseUnits(college, course, major);
 
-                <p id="feedbackText" class="mt-4 text-center font-bold text-xl hidden"></p>
-            </div>
-        </div>
-    </div>
+      if (units && units.length > 0) {
+        $w('#unitDropdown').options = units.map(unit => ({
+          label: unit.label,    // <---- ONLY THIS LINE CHANGED TO fix unit names display
+          value: unit.value
+        }));
+        $w('#unitDropdown').enable();
+        $w('#unitDropdown').show();
+        $w('#topicInput').show();
+        $w('#generateBtn').show();
+        $w('#courseHeader').text = `${college} • ${major} • ${course}`;
+        $w('#courseHeader').show();
+      } else {
+        $w('#unitDropdown').options = [
+          { label: "Unit 1", value: "Unit 1" },
+          { label: "Unit 2", value: "Unit 2" },
+          { label: "Unit 3", value: "Unit 3" }
+        ];
+        $w('#unitDropdown').enable();
+        $w('#unitDropdown').show();
+      }
+    } catch (error) {
+      console.error("Error setting course:", error);
+      $w('#errorMessage').text = "Failed to load units. Please try again.";
+      $w('#errorMessage').show();
+    }
+  });
 
-    <script>
-        const collegeMajors = {
-          "Coastal Carolina University": ["Marine Science", "Business Administration", "Computer Science", "Exercise and Sport Science", "Physical Education"],
-          "North Carolina State University": ["Engineering", "Computer Science", "Agricultural Sciences", "Supply Chain Management and Logistics", "Textile Engineering"],
-          "University of Alabama": ["Political Science", "Nursing", "Business", "Management Information Systems", "Psychology"],
-          "Wake Technical Community College": ["Liberal Arts", "Information Technology", "Business", "Registered Nursing", "Construction", "GM ASEP"],
-          "Georgia Institute of Technology": ["Aerospace Engineering", "Computer Science", "Industrial Design", "Biomedical Engineering"]
-        };
+  $w('#generateBtn').onClick(async () => {
+    try {
+      const college = $w('#collegeDropdown').value;
+      const major = $w('#majorDropdown').value;
+      const course = $w('#courseInput').value;
+      const unit = $w('#unitDropdown').value;
+      const topic = $w('#topicInput').value;
+      const difficulty = $w('#difficultySldr').value;
 
-        function hideAllQuizElements() {
-            document.getElementById('unitDropdownContainer').classList.add('hidden');
-            document.getElementById('unitDropdownDiv').classList.add('hidden');
-            document.getElementById('topicInput').classList.add('hidden');
-            document.getElementById('generateBtnContainer').classList.add('hidden');
-            document.getElementById('difficultySlider').classList.add('hidden');
-            document.getElementById('questionText').classList.add('hidden');
-            document.getElementById('courseHeader').classList.add('hidden');
-            hideAnswerButtons();
-            hideAnswerTexts();
-            document.getElementById('feedbackText').classList.add('hidden');
-        }
+      if (!college || !major || !course || !unit || !topic) {
+        $w('#questionText').text = "Please fill in all fields.";
+        hideAnswerButtons();
+        hideAnswerTexts();
+        $w('#feedbackText').hide();
+        return;
+      }
 
-        function hideAnswerButtons() {
-            ['A', 'B', 'C', 'D'].forEach(letter => document.getElementById(`answerBtn${letter}`).classList.add('hidden'));
-        }
+      $w('#questionText').text = "Generating question...";
+      hideAnswerButtons();
+      hideAnswerTexts();
+      $w('#feedbackText').hide();
 
-        function showAnswerButtons() {
-            ['A', 'B', 'C', 'D'].forEach(letter => document.getElementById(`answerBtn${letter}`).classList.remove('hidden'));
-        }
+      const result = await Promise.race([
+        generateCollegeQuizQuestion(college, major, course, unit, topic, difficulty),
+        timeout(12000)
+      ]);
+      
+      const correctIndex = result.indexOf("Correct Answer:");
+      if (correctIndex === -1) throw new Error("Invalid response format: 'Correct Answer:' not found.");
 
-        function hideAnswerTexts() {
-            ['A', 'B', 'C', 'D'].forEach(letter => document.getElementById(`answerText${letter}`).classList.add('hidden'));
-        }
+      const rawQuestionAndOptions = result.substring(0, correctIndex).trim();
+      const rawCorrectAnswer = result.substring(correctIndex + "Correct Answer:".length).trim();
+      
+      const lines = rawQuestionAndOptions.split('\n');
+      const questionIndex = lines.findIndex(line => line.toLowerCase().startsWith("question:"));
+      const optionAIndex = lines.findIndex(line => line.startsWith("A."));
 
-        function populateCollegeDropdown() {
-            const collegeDropdown = document.getElementById('collegeDropdown');
-            collegeDropdown.innerHTML = '<option value="">Select College</option>';
-            Object.keys(collegeMajors).forEach(college => {
-                const opt = document.createElement('option');
-                opt.value = college;
-                opt.textContent = college;
-                collegeDropdown.appendChild(opt);
-            });
-            collegeDropdown.disabled = false;
-        }
+      if (questionIndex === -1 || optionAIndex === -1) throw new Error("Invalid response format: Question or options not found.");
 
-        function populateMajorDropdown(collegeName) {
-            const majorDropdown = document.getElementById('majorDropdown');
-            majorDropdown.innerHTML = '<option value="">Select Major</option>';
-            const majors = collegeMajors[collegeName] || [];
-            majors.forEach(major => {
-                const opt = document.createElement('option');
-                opt.value = major;
-                opt.textContent = major;
-                majorDropdown.appendChild(opt);
-            });
-            majorDropdown.disabled = false;
-        }
-        
-        async function callGeminiApiForUnits(prompt) {
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "ARRAY",
-                        items: {
-                            type: "OBJECT",
-                            properties: {
-                                label: { "type": "STRING" },
-                                value: { "type": "STRING" }
-                            },
-                            required: ["label", "value"]
-                        }
-                    }
-                }
-            };
+      const questionLines = lines.slice(questionIndex, optionAIndex);
+      const questionText = questionLines.join('\n').replace(/^(Question|Q)\.\s*/i, '').trim();
 
-            const apiKey = ""; // <--- PASTE YOUR API KEY HERE BETWEEN THE QUOTATION MARKS
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status} - ${await response.text()}`);
-            }
-
-            const result = await response.json();
-            const jsonPart = result.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (!jsonPart) {
-                throw new Error("Invalid response format from API");
-            }
-
-            return JSON.parse(jsonPart);
-        }
-
-        async function callGeminiApiForQuestion(prompt) {
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            question: { "type": "STRING" },
-                            options: {
-                                type: "ARRAY",
-                                items: { "type": "STRING" }
-                            },
-                            correctAnswerIndex: { "type": "NUMBER" }
-                        },
-                        required: ["question", "options", "correctAnswerIndex"]
-                    }
-                }
-            };
-            const apiKey = ""; // <--- PASTE YOUR API KEY HERE BETWEEN THE QUOTATION MARKS
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                throw new Error(`API error: ${response.status} - ${await response.text()}`);
-            }
-
-            const result = await response.json();
-            const jsonPart = result.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (!jsonPart) {
-                throw new Error("Invalid response format from API");
-            }
-            return JSON.parse(jsonPart);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            populateCollegeDropdown();
-            hideAllQuizElements();
-
-            document.getElementById('collegeDropdown').addEventListener('change', () => {
-                const selectedCollege = document.getElementById('collegeDropdown').value;
-                if (selectedCollege) populateMajorDropdown(selectedCollege);
-                else {
-                    document.getElementById('majorDropdown').innerHTML = '<option value="">Select Major</option>';
-                    document.getElementById('majorDropdown').disabled = true;
-                }
-                document.getElementById('majorDropdown').value = '';
-                document.getElementById('courseInput').value = '';
-                hideAllQuizElements();
-            });
-
-            document.getElementById('setCourse').addEventListener('click', async () => {
-                try {
-                    const college = document.getElementById('collegeDropdown').value;
-                    const major = document.getElementById('majorDropdown').value;
-                    const course = document.getElementById('courseInput').value.trim();
-
-                    if (!college || !major || !course) {
-                        document.getElementById('errorMessage').textContent = "Please complete all fields to set the course.";
-                        document.getElementById('errorMessage').classList.remove('hidden');
-                        hideAllQuizElements();
-                        return;
-                    }
-
-                    document.getElementById('errorMessage').classList.add('hidden');
-                    const unitDropdownEl = document.getElementById('unitDropdown');
-                    unitDropdownEl.innerHTML = '<option value="">Loading units...</option>';
-                    unitDropdownEl.disabled = true;
-                    
-                    const prompt = `Generate 10 detailed and specific unit names for the course "${course}" offered at ${college} for a ${major} major.
-                                     Return only a JSON array of objects with "label" and "value" fields.`;
-                    
-                    const units = await callGeminiApiForUnits(prompt);
-                    
-                    if (units.length > 0) {
-                        unitDropdownEl.innerHTML = '<option value="">Select Unit</option>';
-                        units.forEach(unit => {
-                            const opt = document.createElement('option');
-                            opt.value = unit.value;
-                            opt.textContent = unit.label;
-                            unitDropdownEl.appendChild(opt);
-                        });
-                        unitDropdownEl.disabled = false;
-                        document.getElementById('unitDropdownContainer').classList.remove('hidden');
-                        document.getElementById('unitDropdownDiv').classList.remove('hidden');
-                        document.getElementById('topicInput').classList.remove('hidden');
-                        document.getElementById('difficultySlider').classList.remove('hidden');
-                        document.getElementById('generateBtnContainer').classList.remove('hidden');
-                        document.getElementById('courseHeader').textContent = `${college} • ${major} • ${course}`;
-                        document.getElementById('courseHeader').classList.remove('hidden');
-                    } else {
-                        document.getElementById('errorMessage').textContent = "Failed to load units. Please try again.";
-                        document.getElementById('errorMessage').classList.remove('hidden');
-                    }
-                } catch (error) {
-                    console.error("Error setting course:", error);
-                    document.getElementById('errorMessage').textContent = `Failed to load units. Error: ${error.message}`;
-                    document.getElementById('errorMessage').classList.remove('hidden');
-                }
-            });
-
-            document.getElementById('generateBtn').addEventListener('click', async () => {
-                try {
-                    const college = document.getElementById('collegeDropdown').value;
-                    const major = document.getElementById('majorDropdown').value;
-                    const course = document.getElementById('courseInput').value.trim();
-                    const unit = document.getElementById('unitDropdown').value;
-                    const topic = document.getElementById('topicInput').value;
-                    const difficulty = parseInt(document.getElementById('difficultySldr').value);
-
-                    if (!college || !major || !course || !unit || !topic) {
-                        document.getElementById('questionText').textContent = "Please fill in all fields.";
-                        document.getElementById('questionText').classList.remove('hidden');
-                        hideAnswerButtons();
-                        hideAnswerTexts();
-                        document.getElementById('feedbackText').classList.add('hidden');
-                        return;
-                    }
-
-                    document.getElementById('questionText').textContent = "Generating question...";
-                    document.getElementById('questionText').classList.remove('hidden');
-                    hideAnswerButtons();
-                    hideAnswerTexts();
-                    document.getElementById('feedbackText').classList.add('hidden');
-
-                    const stylesByCategory = {
-                      technical: [ "Code debugging", "Code writing", "Algorithm optimization", "System architecture analysis", "Output prediction" ],
-                      analytical: [ "Data interpretation", "Scenario-based problem-solving", "Case study analysis", "Process design", "Multi-step calculation" ],
-                      scientific: [ "Experimental design", "Data/graph interpretation", "Diagnosis from observations", "Fieldwork planning", "Calculation-heavy measurement problem" ]
-                    };
-
-                    let category;
-                    if (["Computer Science", "Information Technology", "Management Information Systems", "Engineering", "Supply Chain Management and Logistics", "Textile Engineering"].includes(major)) {
-                      category = "technical";
-                    } else if (["Business Administration", "Business", "Political Science", "Industrial Design"].includes(major)) {
-                      category = "analytical";
-                    } else {
-                      category = "scientific";
-                    }
-
-                    const styleOptions = stylesByCategory[category];
-                    const randomStyle = styleOptions[Math.floor(Math.random() * styleOptions.length)];
-
-                    let difficultyDescription;
-                    if (difficulty >= 1 && difficulty <= 3) difficultyDescription = "easy, base-level";
-                    else if (difficulty >= 4 && difficulty <= 7) difficultyDescription = "standard, course-appropriate";
-                    else if (difficulty >= 8 && difficulty <= 10) difficultyDescription = "extremely difficult, complex, or multi-step";
-                    else difficultyDescription = "standard, course-appropriate";
-
-                    const prompt = `Generate an **${difficultyDescription}** question in the style of a **${randomStyle.toLowerCase()}**. Major: ${major}, Course: ${course}, Unit: ${unit}, Topic: ${topic}.
-                    The question should be based on a verifiable fact about the topic, woven seamlessly into the problem statement.
-                    The question must require applying concepts from the course.
-                    Provide 4 answer choices.
-                    Return ONLY a JSON object with 'question' (string), 'options' (array of 4 strings), and 'correctAnswerIndex' (a number from 0-3).`;
-
-                    const quizData = await callGeminiApiForQuestion(prompt);
-
-                    const questionText = quizData.question;
-                    const options = quizData.options;
-                    const correctIndex = quizData.correctAnswerIndex;
-                    const correctLetter = ['A', 'B', 'C', 'D'][correctIndex];
-
-                    document.getElementById('questionText').textContent = questionText;
-                    document.getElementById('questionText').classList.remove('hidden');
-                    showAnswerButtons();
-
-                    ['A', 'B', 'C', 'D'].forEach((letter, index) => {
-                        const textEl = document.getElementById(`answerText${letter}`);
-                        textEl.textContent = options[index] || '';
-                        textEl.classList.remove('hidden');
-                    });
-                    
-                    answerOptions = {
-                        'A': options[0],
-                        'B': options[1],
-                        'C': options[2],
-                        'D': options[3]
-                    };
-                    correctAnswer = correctLetter;
-
-                    document.getElementById('feedbackText').classList.add('hidden');
-
-                } catch (error) {
-                    console.error("Generation error:", error);
-                    document.getElementById('questionText').textContent = `Failed to generate question. Error: ${error.message}`;
-                    document.getElementById('questionText').classList.remove('hidden');
-                    hideAnswerButtons();
-                    hideAnswerTexts();
-                    document.getElementById('feedbackText').classList.add('hidden');
-                }
-            });
-
-            ['A', 'B', 'C', 'D'].forEach(letter => {
-                document.getElementById(`answerBtn${letter}`).addEventListener('click', () => {
-                    if (!correctAnswer) return;
-                    const feedbackEl = document.getElementById('feedbackText');
-                    if (letter.toUpperCase() === correctAnswer) {
-                        feedbackEl.textContent = "✅ Correct!";
-                        feedbackEl.style.color = '#10B981';
-                    } else {
-                        const correctText = answerOptions[correctAnswer] || '';
-                        feedbackEl.textContent = `❌ Incorrect. The correct answer was: ${correctAnswer}. ${correctText}`;
-                        feedbackEl.style.color = '#EF4444';
-                    }
-                    feedbackEl.classList.remove('hidden');
-                });
-            });
-
-            document.getElementById('difficultySldr').addEventListener('input', (event) => {
-                document.getElementById('difficultyValue').textContent = event.target.value;
-            });
+      const optionsText = lines.slice(optionAIndex).join('\n');
+      
+      answerOptions = {};
+      const optionMatches = optionsText.match(/[A-D]\.\s*[\s\S]+?(?=\n[B-D]\.|$)/g);
+      if (optionMatches) {
+        optionMatches.forEach(match => {
+          const key = match[0];
+          const value = match.substring(2).trim();
+          answerOptions[key] = value;
         });
-    </script>
-</body>
-</html>
+      }
+      
+      correctAnswer = rawCorrectAnswer.toUpperCase().match(/[A-D]/)[0];
+
+      $w('#questionText').text = questionText;
+      $w('#questionText').show();
+      showAnswerButtons();
+
+      ['A', 'B', 'C', 'D'].forEach(letter => {
+        $w(`#answerText${letter}`).text = answerOptions[letter] || '';
+        $w(`#answerText${letter}`).show();
+      });
+
+      $w('#feedbackText').hide();
+
+    } catch (error) {
+      console.error("Generation error:", error);
+      $w('#questionText').text = error.message === "Timeout"
+        ? "Request timed out. Please try again."
+        : `Failed to generate question. Error: ${error.message}`;
+      $w('#questionText').show();
+      hideAnswerButtons();
+      hideAnswerTexts();
+      $w('#feedbackText').hide();
+    }
+  });
+
+  ['A', 'B', 'C', 'D'].forEach(letter => {
+    $w(`#answerBtn${letter}`).onClick(() => {
+      if (!correctAnswer) return;
+
+      if (letter.toUpperCase() === correctAnswer) {
+        $w('#feedbackText').text = "✅ Correct!";
+      } else {
+        const correctText = answerOptions[correctAnswer] || '';
+        $w('#feedbackText').text = `❌ Incorrect. The correct answer was: ${correctAnswer}. ${correctText}`;
+      }
+      $w('#feedbackText').show();
+    });
+  });
+
+  function hideAllQuizElements() {
+    $w('#unitDropdown').hide();
+    $w('#topicInput').hide();
+    $w('#generateBtn').hide();
+    $w('#questionText').hide();
+    $w('#courseHeader').hide();
+    hideAnswerButtons();
+    hideAnswerTexts();
+    $w('#feedbackText').hide();
+  }
+
+  function hideAnswerButtons() {
+    ['A', 'B', 'C', 'D'].forEach(letter => $w(`#answerBtn${letter}`).hide());
+  }
+  function showAnswerButtons() {
+    ['A', 'B', 'C', 'D'].forEach(letter => $w(`#answerBtn${letter}`).show());
+  }
+  function hideAnswerTexts() {
+    ['A', 'B', 'C', 'D'].forEach(letter => $w(`#answerText${letter}`).hide());
+  }
+  function populateCollegeDropdown() {
+    const colleges = Object.keys(collegeMajors);
+    const collegeOptions = colleges.map(college => ({
+      label: college,
+      value: college
+    }));
+    $w('#collegeDropdown').options = collegeOptions;
+    $w('#collegeDropdown').enable();
+  }
+  function populateMajorDropdown(collegeName) {
+    const majors = collegeMajors[collegeName] || [];
+    const majorOptions = majors.map(major => ({
+      label: major,
+      value: major
+    }));
+    $w('#majorDropdown').options = majorOptions;
+    $w('#majorDropdown').enable();
+    $w('#majorDropdown').placeholder = "Select Major";
+  }
+});
