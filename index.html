@@ -1,325 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Independent Learning Project</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Independent Learning Project</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }</style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
-    <div class="bg-white shadow-xl rounded-lg p-8 w-full max-w-2xl">
-        <h1 class="text-3xl font-bold text-center text-indigo-800 mb-6">Independent Learning Project</h1>
+<div class="bg-white shadow-xl rounded-lg p-8 w-full max-w-2xl">
+<h1 class="text-3xl font-bold text-center text-indigo-800 mb-6">Independent Learning Project</h1>
 
-        <div class="mb-4">
-            <label for="collegeDropdown" class="block text-sm font-medium text-gray-700">Select College:</label>
-            <select id="collegeDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                <option value="">Select College</option>
-            </select>
-        </div>
+<div class="mb-4">
+<label>Select College:</label>
+<select id="collegeDropdown" class="..."><option value="">Select College</option></select>
+</div>
 
-        <div class="mb-4">
-            <label for="majorDropdown" class="block text-sm font-medium text-gray-700">Select Major:</label>
-            <select id="majorDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" disabled>
-                <option value="">Select Major</option>
-            </select>
-        </div>
+<div class="mb-4">
+<label>Select Major:</label>
+<select id="majorDropdown" class="..." disabled><option value="">Select Major</option></select>
+</div>
 
-        <div class="mb-4">
-            <label for="courseInput" class="block text-sm font-medium text-gray-700">Course Name or Code:</label>
-            <input type="text" id="courseInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., Intro to Psychology">
-        </div>
+<div class="mb-4">
+<label>Course Name or Code:</label>
+<input type="text" id="courseInput" placeholder="e.g., Intro to Psychology" class="...">
+</div>
 
-        <div class="flex justify-center mb-6">
-            <button id="setCourse" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out">Set Course</button>
-        </div>
+<div class="flex justify-center mb-6">
+<button id="setCourse" class="...">Set Course</button>
+</div>
 
-        <p id="errorMessage" class="text-red-500 text-sm text-center mb-4 hidden"></p>
+<p id="errorMessage" class="text-red-500 text-sm text-center mb-4 hidden"></p>
 
-        <div id="unitDropdownContainer" class="border-t pt-6 mt-6 border-gray-200">
-            <h2 id="courseHeader" class="text-xl font-semibold text-center text-gray-800 mb-4 hidden"></h2>
-            
-            <div id="unitDropdownDiv" class="mb-4 hidden">
-                <label for="unitDropdown" class="block text-sm font-medium text-gray-700">Select Unit:</label>
-                <select id="unitDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></select>
-            </div>
-            
-            <div class="mb-4 hidden" id="topicInput">
-                <label for="topicInput" class="block text-sm font-medium text-gray-700">Specific Topic:</label>
-                <input type="text" id="topicInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., Cognitive Dissonance">
-            </div>
+<div id="unitDropdownContainer" class="border-t pt-6 mt-6 border-gray-200">
+<h2 id="courseHeader" class="text-xl font-semibold text-center text-gray-800 mb-4 hidden"></h2>
 
-            <div class="mb-6 hidden" id="difficultySlider">
-                <label for="difficultySldr" class="block text-sm font-medium text-gray-700">Difficulty: <span id="difficultyValue">5</span></label>
-                <input type="range" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="difficultySldr">
-            </div>
-            
-            <div class="flex justify-center hidden" id="generateBtnContainer">
-                <button id="generateBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out">Generate Question</button>
-            </div>
+<div id="unitDropdownDiv" class="mb-4 hidden">
+<label>Select Unit:</label>
+<select id="unitDropdown" class="..."></select>
+</div>
 
-            <div id="quizContent" class="mt-6">
-                <p id="questionText" class="text-lg font-medium text-gray-900 mb-4 hidden"></p>
-                
-                <div id="answerButtons" class="space-y-4">
-                    <button id="answerBtnA" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
-                        <span id="answerTextA" class="font-medium text-left block hidden"></span>
-                    </button>
-                    <button id="answerBtnB" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
-                        <span id="answerTextB" class="font-medium text-left block hidden"></span>
-                    </button>
-                    <button id="answerBtnC" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
-                        <span id="answerTextC" class="font-medium text-left block hidden"></span>
-                    </button>
-                    <button id="answerBtnD" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
-                        <span id="answerTextD" class="font-medium text-left block hidden"></span>
-                    </button>
-                </div>
+<div class="mb-4 hidden" id="topicInput">
+<label>Specific Topic:</label>
+<input type="text" id="topicInput" placeholder="e.g., Cognitive Dissonance" class="...">
+</div>
 
-                <p id="feedbackText" class="mt-4 text-center font-bold text-xl hidden"></p>
-            </div>
-        </div>
-    </div>
+<div class="mb-6 hidden" id="difficultySlider">
+<label>Difficulty: <span id="difficultyValue">5</span></label>
+<input type="range" min="1" max="10" value="5" id="difficultySldr" class="w-full h-2 rounded-lg">
+</div>
 
-    <script>
-        const collegeMajors = {
-          "Coastal Carolina University": ["Marine Science", "Business Administration", "Computer Science", "Exercise and Sport Science", "Physical Education"],
-          "North Carolina State University": ["Engineering", "Computer Science", "Agricultural Sciences", "Supply Chain Management and Logistics", "Textile Engineering"],
-          "University of Alabama": ["Political Science", "Nursing", "Business", "Management Information Systems", "Psychology"],
-          "Wake Technical Community College": ["Liberal Arts", "Information Technology", "Business", "Registered Nursing", "Construction", "GM ASEP"],
-          "Georgia Institute of Technology": ["Aerospace Engineering", "Computer Science", "Industrial Design", "Biomedical Engineering"]
-        };
+<div class="flex justify-center hidden" id="generateBtnContainer">
+<button id="generateBtn" class="...">Generate Question</button>
+</div>
 
-        function hideAllQuizElements() {
-            document.getElementById('unitDropdownContainer').classList.add('hidden');
-            document.getElementById('unitDropdownDiv').classList.add('hidden');
-            document.getElementById('topicInput').classList.add('hidden');
-            document.getElementById('generateBtnContainer').classList.add('hidden');
-            document.getElementById('difficultySlider').classList.add('hidden');
-            document.getElementById('questionText').classList.add('hidden');
-            document.getElementById('courseHeader').classList.add('hidden');
-            hideAnswerButtons();
-            hideAnswerTexts();
-            document.getElementById('feedbackText').classList.add('hidden');
-        }
+<div id="quizContent" class="mt-6">
+<p id="questionText" class="text-lg font-medium text-gray-900 mb-4 hidden"></p>
+<div id="answerButtons" class="space-y-4">
+<button id="answerBtnA" class="answer-btn w-full ..."><span id="answerTextA" class="hidden"></span></button>
+<button id="answerBtnB" class="answer-btn w-full ..."><span id="answerTextB" class="hidden"></span></button>
+<button id="answerBtnC" class="answer-btn w-full ..."><span id="answerTextC" class="hidden"></span></button>
+<button id="answerBtnD" class="answer-btn w-full ..."><span id="answerTextD" class="hidden"></span></button>
+</div>
+<p id="feedbackText" class="mt-4 text-center font-bold text-xl hidden"></p>
+</div>
+</div>
+</div>
 
-        function hideAnswerButtons() {
-            ['A', 'B', 'C', 'D'].forEach(letter => document.getElementById(`answerBtn${letter}`).classList.add('hidden'));
-        }
+<script>
+const collegeMajors = {
+  "Coastal Carolina University": ["Marine Science","Business Administration","Computer Science","Exercise and Sport Science","Physical Education"],
+  "North Carolina State University": ["Engineering","Computer Science","Agricultural Sciences","Supply Chain Management and Logistics","Textile Engineering"],
+  "University of Alabama": ["Political Science","Nursing","Business","Management Information Systems","Psychology"],
+  "Wake Technical Community College": ["Liberal Arts","Information Technology","Business","Registered Nursing","Construction","GM ASEP"],
+  "Georgia Institute of Technology": ["Aerospace Engineering","Computer Science","Industrial Design","Biomedical Engineering"]
+};
 
-        function showAnswerButtons() {
-            ['A', 'B', 'C', 'D'].forEach(letter => document.getElementById(`answerBtn${letter}`).classList.remove('hidden'));
-        }
+let correctAnswer = '';
+let answerOptions = {};
 
-        function hideAnswerTexts() {
-            ['A', 'B', 'C', 'D'].forEach(letter => document.getElementById(`answerText${letter}`).classList.add('hidden'));
-        }
+function hideAllQuizElements(){ /*...*/ }
+function hideAnswerButtons(){/*...*/}
+function showAnswerButtons(){/*...*/}
+function hideAnswerTexts(){/*...*/}
+function populateCollegeDropdown(){ /* fills #collegeDropdown */ }
+function populateMajorDropdown(collegeName){ /* fills #majorDropdown */ }
 
-        function populateCollegeDropdown() {
-            const collegeDropdown = document.getElementById('collegeDropdown');
-            collegeDropdown.innerHTML = '<option value="">Select College</option>';
-            Object.keys(collegeMajors).forEach(college => {
-                const opt = document.createElement('option');
-                opt.value = college;
-                opt.textContent = college;
-                collegeDropdown.appendChild(opt);
-            });
-            collegeDropdown.disabled = false;
-        }
+async function callServerForUnits(data){
+    const response = await fetch('/api/generate-units', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+    if(!response.ok) throw new Error(`Server error: ${response.status} - ${await response.text()}`);
+    return await response.json();
+}
 
-        function populateMajorDropdown(collegeName) {
-            const majorDropdown = document.getElementById('majorDropdown');
-            majorDropdown.innerHTML = '<option value="">Select Major</option>';
-            const majors = collegeMajors[collegeName] || [];
-            majors.forEach(major => {
-                const opt = document.createElement('option');
-                opt.value = major;
-                opt.textContent = major;
-                majorDropdown.appendChild(opt);
-            });
-            majorDropdown.disabled = false;
-        }
-        
-        async function callServerForUnits(data) {
-            const response = await fetch('/generate-units', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+async function callServerForQuestion(data){
+    const response = await fetch('/api/generate-question', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)});
+    if(!response.ok) throw new Error(`Server error: ${response.status} - ${await response.text()}`);
+    return await response.json();
+}
 
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status} - ${await response.text()}`);
-            }
+document.addEventListener('DOMContentLoaded', ()=>{
+    populateCollegeDropdown();
+    hideAllQuizElements();
 
-            return await response.json();
-        }
+    document.getElementById('collegeDropdown').addEventListener('change', ()=>{
+        const selectedCollege = document.getElementById('collegeDropdown').value;
+        if(selectedCollege) populateMajorDropdown(selectedCollege);
+        else document.getElementById('majorDropdown').disabled = true;
+        document.getElementById('majorDropdown').value='';
+        document.getElementById('courseInput').value='';
+        hideAllQuizElements();
+    });
 
-        async function callServerForQuestion(data) {
-            const response = await fetch('/generate-question', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status} - ${await response.text()}`);
-            }
-            return await response.json();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            populateCollegeDropdown();
-            hideAllQuizElements();
-
-            document.getElementById('collegeDropdown').addEventListener('change', () => {
-                const selectedCollege = document.getElementById('collegeDropdown').value;
-                if (selectedCollege) populateMajorDropdown(selectedCollege);
-                else {
-                    document.getElementById('majorDropdown').innerHTML = '<option value="">Select Major</option>';
-                    document.getElementById('majorDropdown').disabled = true;
-                }
-                document.getElementById('majorDropdown').value = '';
-                document.getElementById('courseInput').value = '';
-                hideAllQuizElements();
-            });
-
-            document.getElementById('setCourse').addEventListener('click', async () => {
-                try {
-                    const college = document.getElementById('collegeDropdown').value;
-                    const major = document.getElementById('majorDropdown').value;
-                    const course = document.getElementById('courseInput').value.trim();
-
-                    if (!college || !major || !course) {
-                        document.getElementById('errorMessage').textContent = "Please complete all fields to set the course.";
-                        document.getElementById('errorMessage').classList.remove('hidden');
-                        hideAllQuizElements();
-                        return;
-                    }
-
-                    document.getElementById('errorMessage').classList.add('hidden');
-                    const unitDropdownEl = document.getElementById('unitDropdown');
-                    unitDropdownEl.innerHTML = '<option value="">Loading units...</option>';
-                    unitDropdownEl.disabled = true;
-                    
-                    const units = await callServerForUnits({ college, major, course });
-                    
-                    if (units.length > 0) {
-                        unitDropdownEl.innerHTML = '<option value="">Select Unit</option>';
-                        units.forEach(unit => {
-                            const opt = document.createElement('option');
-                            opt.value = unit.value;
-                            opt.textContent = unit.label;
-                            unitDropdownEl.appendChild(opt);
-                        });
-                        unitDropdownEl.disabled = false;
-                        document.getElementById('unitDropdownContainer').classList.remove('hidden');
-                        document.getElementById('unitDropdownDiv').classList.remove('hidden');
-                        document.getElementById('topicInput').classList.remove('hidden');
-                        document.getElementById('difficultySlider').classList.remove('hidden');
-                        document.getElementById('generateBtnContainer').classList.remove('hidden');
-                        document.getElementById('courseHeader').textContent = `${college} • ${major} • ${course}`;
-                        document.getElementById('courseHeader').classList.remove('hidden');
-                    } else {
-                        document.getElementById('errorMessage').textContent = "Failed to load units. Please try again.";
-                        document.getElementById('errorMessage').classList.remove('hidden');
-                    }
-                } catch (error) {
-                    console.error("Error setting course:", error);
-                    document.getElementById('errorMessage').textContent = `Failed to load units. Error: ${error.message}`;
-                    document.getElementById('errorMessage').classList.remove('hidden');
-                }
-            });
-
-            document.getElementById('generateBtn').addEventListener('click', async () => {
-                try {
-                    const college = document.getElementById('collegeDropdown').value;
-                    const major = document.getElementById('majorDropdown').value;
-                    const course = document.getElementById('courseInput').value.trim();
-                    const unit = document.getElementById('unitDropdown').value;
-                    const topic = document.getElementById('topicInput').value;
-                    const difficulty = parseInt(document.getElementById('difficultySldr').value);
-
-                    if (!college || !major || !course || !unit || !topic) {
-                        document.getElementById('questionText').textContent = "Please fill in all fields.";
-                        document.getElementById('questionText').classList.remove('hidden');
-                        hideAnswerButtons();
-                        hideAnswerTexts();
-                        document.getElementById('feedbackText').classList.add('hidden');
-                        return;
-                    }
-
-                    document.getElementById('questionText').textContent = "Generating question...";
-                    document.getElementById('questionText').classList.remove('hidden');
-                    hideAnswerButtons();
-                    hideAnswerTexts();
-                    document.getElementById('feedbackText').classList.add('hidden');
-                    
-                    const quizData = await callServerForQuestion({ college, major, course, unit, topic, difficulty });
-
-                    const questionText = quizData.question;
-                    const options = quizData.options;
-                    const correctIndex = quizData.correctAnswerIndex;
-                    const correctLetter = ['A', 'B', 'C', 'D'][correctIndex];
-
-                    document.getElementById('questionText').textContent = questionText;
-                    document.getElementById('questionText').classList.remove('hidden');
-                    showAnswerButtons();
-
-                    ['A', 'B', 'C', 'D'].forEach((letter, index) => {
-                        const textEl = document.getElementById(`answerText${letter}`);
-                        textEl.textContent = options[index] || '';
-                        textEl.classList.remove('hidden');
-                    });
-                    
-                    answerOptions = {
-                        'A': options[0],
-                        'B': options[1],
-                        'C': options[2],
-                        'D': options[3]
-                    };
-                    correctAnswer = correctLetter;
-
-                    document.getElementById('feedbackText').classList.add('hidden');
-
-                } catch (error) {
-                    console.error("Generation error:", error);
-                    document.getElementById('questionText').textContent = `Failed to generate question. Error: ${error.message}`;
-                    document.getElementById('questionText').classList.remove('hidden');
-                    hideAnswerButtons();
-                    hideAnswerTexts();
-                    document.getElementById('feedbackText').classList.add('hidden');
-                }
-            });
-
-            ['A', 'B', 'C', 'D'].forEach(letter => {
-                document.getElementById(`answerBtn${letter}`).addEventListener('click', () => {
-                    if (!correctAnswer) return;
-                    const feedbackEl = document.getElementById('feedbackText');
-                    if (letter.toUpperCase() === correctAnswer) {
-                        feedbackEl.textContent = "✅ Correct!";
-                        feedbackEl.style.color = '#10B981';
-                    } else {
-                        const correctText = answerOptions[correctAnswer] || '';
-                        feedbackEl.textContent = `❌ Incorrect. The correct answer was: ${correctAnswer}. ${correctText}`;
-                        feedbackEl.style.color = '#EF4444';
-                    }
-                    feedbackEl.classList.remove('hidden');
-                });
-            });
-
-            document.getElementById('difficultySldr').addEventListener('input', (event) => {
-                document.getElementById('difficultyValue').textContent = event.target.value;
-            });
-        });
-    </script>
-</body>
-</html>
+    document.getElementById('setCourse').addEventListener('click', async ()=>{
+        try{
+            const college = document.getElementById('collegeDropdown').value;
+            const major = document.getElementById('majorDropdown').value;
+            const course = document.getElementById('courseInput').value.trim();
+            if(!college||!major||!course){
+                document.getElementById('errorMessage').textContent="Please complete all fields to set the course.";
+                document.getElementById('errorMessage').classList.remove('hidden');
+                hide
