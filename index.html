@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Independent Learning Project</title>
+    <!--
+      This script tag loads Tailwind CSS, a framework that lets us style the website
+      with simple classes directly in the HTML. It makes the site look modern and clean.
+    -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      /* We are using the 'Inter' font for a clean, modern look. */
       body {
           font-family: 'Inter', sans-serif;
       }
@@ -13,39 +18,54 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
 
+    <!--
+      This is the main container for our website. It's centered on the page.
+    -->
     <div class="bg-white shadow-xl rounded-2xl p-6 md:p-10 w-full max-w-4xl mx-auto my-8">
 
-        <!-- Navigation Buttons -->
+        <!--
+          This is the navigation bar. We will use JavaScript to switch between pages
+          without reloading the page.
+        -->
         <nav class="flex justify-center space-x-4 md:space-x-8 mb-6 border-b pb-4">
             <button id="home-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">Home</button>
             <button id="about-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">About</button>
             <button id="contact-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">Contact</button>
         </nav>
 
-        <!-- Home Section -->
+        <!--
+          This is the new Home page section, with a title and the three interactive squares.
+        -->
         <section id="home-section" class="website-section">
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 text-center">Independent Learning Project</h1>
             <p class="text-lg md:text-xl text-gray-600 text-center mb-10">
               A Twist on Education
             </p>
 
+            <!-- This div holds the three interactive squares -->
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
 
+                <!-- Middle School Square -->
                 <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">Middle School</h2>
                 </div>
 
+                <!-- High School Square -->
                 <div id="high-school-square" data-target="high-school-section" class="interactive-square cursor-pointer bg-purple-500 hover:bg-purple-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">High School</h2>
                 </div>
 
+                <!-- College Courses Square -->
                 <div id="college-courses-square" data-target="college-courses-section" class="interactive-square cursor-pointer bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h2 class="text-2xl font-bold">College Courses</h2>
                 </div>
+
             </div>
         </section>
 
-        <!-- About Section -->
+        <!--
+          This is the About section. It's hidden by default.
+        -->
         <section id="about-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">About Me</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -56,39 +76,50 @@
             </p>
         </section>
 
-        <!-- Contact Section -->
+        <!--
+          This is the Contact section. It's hidden by default.
+        -->
         <section id="contact-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Contact</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
               If you have any questions or just want to say hello, feel free to reach out to me via email or social media.
             </p>
             <div class="mt-6 flex flex-col space-y-3 items-center">
+                <!-- Replace with your actual email link -->
                 <a href="mailto:your.email@example.com" class="text-lg text-blue-600 hover:underline transition-colors duration-300">your.email@example.com</a>
+                <!-- Replace with your social media links -->
                 <a href="#" class="text-lg text-blue-600 hover:underline transition-colors duration-300">LinkedIn</a>
                 <a href="#" class="text-lg text-blue-600 hover:underline transition-colors duration-300">Twitter</a>
             </div>
         </section>
         
-        <!-- Middle School Section -->
+        <!--
+          New section for Middle School. It's hidden by default.
+        -->
         <section id="middle-school-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
               Click on a subject below to view projects.
             </p>
             <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6 mt-8">
+                <!-- Math Square -->
                 <div data-target="middle-school-math-section" class="interactive-square cursor-pointer bg-white hover:bg-gray-200 text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h3 class="text-2xl font-bold">Math</h3>
                 </div>
+                <!-- English Square -->
                 <div data-target="middle-school-english-section" class="interactive-square cursor-pointer bg-white hover:bg-gray-200 text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h3 class="text-2xl font-bold">English</h3>
                 </div>
+                <!-- Science Square -->
                 <div data-target="middle-school-science-section" class="interactive-square cursor-pointer bg-white hover:bg-gray-200 text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
                     <h3 class="text-2xl font-bold">Science</h3>
                 </div>
             </div>
         </section>
 
-        <!-- High School Section -->
+        <!--
+          New section for High School. It's hidden by default.
+        -->
         <section id="high-school-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -96,18 +127,23 @@
             </p>
         </section>
 
-        <!-- College Courses Section -->
+        <!--
+          New section for College Courses. This is the main content you've asked for.
+        -->
         <section id="college-courses-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">College Courses</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center mb-8">
                 Generate a quiz question for your college-level courses!
             </p>
             
-            <p class="text-sm text-gray-400 text-center mb-4">Your User ID: <span id="userIdDisplay"></span></p>
+            <p class="text-sm text-gray-400 text-center mb-4">Your User ID: <span id="userIdDisplay">Loading...</span></p>
 
             <div class="space-y-6">
                 <!-- Course Setup Inputs -->
                 <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4">
+                    <p id="firebase-message" class="text-center text-sm font-medium text-red-600 hidden">
+                        Database features are disabled because the Firebase configuration is missing.
+                    </p>
                     <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
                         <select id="collegeDropdown" class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors" disabled>
                             <option value="">Select College</option>
@@ -137,10 +173,9 @@
                         <input type="range" id="difficultySldr" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
                     </div>
                     <button id="generateBtn" class="w-full px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors">Generate Question</button>
-                    <button id="backToCourses" class="w-full px-6 py-3 bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition-colors hidden">Back to Courses</button>
                 </div>
                 
-                <!-- Quiz Display Section -->
+                <!-- Quiz Display -->
                 <div class="bg-white p-6 rounded-xl shadow-lg mt-8 space-y-4 hidden" id="quiz-display-section">
                     <p id="questionText" class="text-lg font-semibold text-gray-800 hidden">Question text will appear here.</p>
                     <div class="space-y-2">
@@ -154,7 +189,9 @@
             </div>
         </section>
 
-        <!-- Other sections (Math, English, Science) -->
+        <!--
+          New section for Middle School Math.
+        -->
         <section id="middle-school-math-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Math Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -162,6 +199,9 @@
             </p>
         </section>
 
+        <!--
+          New section for Middle School English.
+        -->
         <section id="middle-school-english-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School English Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
@@ -169,67 +209,204 @@
             </p>
         </section>
 
+        <!--
+          New section for Middle School Science.
+        -->
         <section id="middle-school-science-section" class="website-section hidden">
             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Science Projects</h2>
             <p class="text-md text-gray-700 leading-relaxed text-center">
               This is the page for your middle school science projects.
             </p>
         </section>
+
+        <!--
+          New section for High School. It's hidden by default.
+        -->
+        <section id="high-school-section" class="website-section hidden">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Projects</h2>
+            <p class="text-md text-gray-700 leading-relaxed text-center">
+              This is the page for your high school content. You can add text, images, or links to your projects here.
+            </p>
+        </section>
+
+        <!--
+          New section for High School Math.
+        -->
+        <section id="high-school-math-section" class="website-section hidden">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Math Projects</h2>
+            <p class="text-md text-gray-700 leading-relaxed text-center">
+              This is the page for your high school math projects.
+            </p>
+        </section>
+
+        <!--
+          New section for High School English.
+        -->
+        <section id="high-school-english-section" class="website-section hidden">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School English Projects</h2>
+            <p class="text-md text-gray-700 leading-relaxed text-center">
+              This is the page for your high school English projects.
+            </p>
+        </section>
+
+        <!--
+          New section for High School Science.
+        -->
+        <section id="high-school-science-section" class="website-section hidden">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Science Projects</h2>
+            <p class="text-md text-gray-700 leading-relaxed text-center">
+              This is the page for your high school science projects.
+            </p>
+        </section>
+
     </div>
 
+    <!-- Firebase SDKs -->
     <script type="module">
-        let correctAnswer = '';
-        let answerOptions = {};
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-        const collegeMajors = {
-            "Coastal Carolina University": [
-                "Marine Science",
-                "Business Administration",
-                "Computer Science",
-                "Exercise and Sport Science",
-                "Physical Education"
-            ],
-            "North Carolina State University": [
-                "Engineering",
-                "Computer Science",
-                "Agricultural Sciences",
-                "Supply Chain Management and Logistics",
-                "Textile Engineering"
-            ],
-            "University of Alabama": [
-                "Political Science",
-                "Nursing",
-                "Business",
-                "Management Information Systems",
-                "Psychology"
-            ],
-            "Wake Technical Community College": [
-                "Liberal Arts",
-                "Information Technology",
-                "Business",
-                "Registered Nursing",
-                "Construction",
-                "GM ASEP"
-            ],
-            "Georgia Institute of Technology": [
-                "Aerospace Engineering",
-                "Computer Science",
-                "Industrial Design",
-                "Biomedical Engineering"
-            ]
-        };
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         
-        function timeout(ms) {
-            return new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), ms));
+        // This is where you will paste your Firebase configuration.
+        // It should look like:
+        // const rawFirebaseConfig = '{"apiKey": "AIza...", "authDomain": "...", ...}';
+        const rawFirebaseConfig = null; // PASTE YOUR CONFIGURATION OBJECT HERE AS A JSON STRING.
+
+        let app, db, auth;
+        let currentUserId = null;
+        let isFirebaseReady = false;
+        
+        // This function will handle all the Firebase and Authentication setup
+        async function initializeFirebase() {
+            try {
+                const firebaseMessage = document.getElementById('firebase-message');
+                const courseInputs = document.querySelectorAll('#college-courses-section input, #college-courses-section select, #college-courses-section button');
+
+                // IMPORTANT: Only proceed with Firebase initialization if the configuration is available.
+                if (!rawFirebaseConfig || rawFirebaseConfig.length === 0) {
+                    console.warn("Firebase config is missing. Database features will be disabled.");
+                    userIdDisplay.textContent = 'Disabled';
+                    firebaseMessage.classList.remove('hidden');
+                    courseInputs.forEach(input => input.disabled = true);
+                    return; // Exit the function gracefully
+                }
+
+                const firebaseConfig = JSON.parse(rawFirebaseConfig);
+
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Wait for authentication to be complete before doing anything else
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        userIdDisplay.textContent = currentUserId;
+                        isFirebaseReady = true;
+                        console.log("Firebase and authentication are now ready.");
+                    } else {
+                        console.log("User is signed out.");
+                        // Handle the case where the user is signed out
+                    }
+                });
+
+                // Authenticate the user once the app is initialized
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                    console.log("Signed in with custom token.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Signed in anonymously.");
+                }
+
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                userIdDisplay.textContent = 'Error';
+                const errorMessageElement = document.getElementById('errorMessage');
+                if (errorMessageElement) {
+                    errorMessageElement.textContent = "Firebase failed to initialize. Please check the console for details.";
+                    errorMessageElement.classList.remove('hidden');
+                }
+            }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // General UI elements and state
+        document.addEventListener('DOMContentLoaded', async () => {
             const navButtons = document.querySelectorAll('nav .nav-button');
             const interactiveSquares = document.querySelectorAll('.interactive-square');
             const sections = document.querySelectorAll('.website-section');
             
-            // Quiz-related DOM elements
+            let correctAnswer = '';
+            let answerOptions = {};
+
+            const collegeMajors = {
+                "Coastal Carolina University": [
+                    "Marine Science",
+                    "Business Administration",
+                    "Computer Science",
+                    "Exercise and Sport Science",
+                    "Physical Education"
+                ],
+                "North Carolina State University": [
+                    "Engineering",
+                    "Computer Science",
+                    "Agricultural Sciences",
+                    "Supply Chain Management and Logistics",
+                    "Textile Engineering"
+                ],
+                "University of Alabama": [
+                    "Political Science",
+                    "Nursing",
+                    "Business",
+                    "Management Information Systems",
+                    "Psychology"
+                ],
+                "Wake Technical Community College": [
+                    "Liberal Arts",
+                    "Information Technology",
+                    "Business",
+                    "Registered Nursing",
+                    "Construction",
+                    "GM ASEP"
+                ],
+                "Georgia Institute of Technology": [
+                    "Aerospace Engineering",
+                    "Computer Science",
+                    "Industrial Design",
+                    "Biomedical Engineering"
+                ]
+            };
+
+            // Function to show a specific section and hide all others
+            const showSection = (sectionId) => {
+                sections.forEach(section => {
+                    section.classList.add('hidden');
+                });
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                }
+            };
+
+            // Add click event listeners to the main navigation buttons
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetSectionId = button.id.replace('-button', '-section');
+                    showSection(targetSectionId);
+                });
+            });
+
+            // Add click event listeners to the new interactive squares
+            interactiveSquares.forEach(square => {
+                square.addEventListener('click', () => {
+                    const targetSectionId = square.getAttribute('data-target');
+                    showSection(targetSectionId);
+                });
+            });
+
+            // ---- Start of your converted College Course Quiz App logic ----
             const collegeDropdown = document.getElementById('collegeDropdown');
             const majorDropdown = document.getElementById('majorDropdown');
             const courseInput = document.getElementById('courseInput');
@@ -245,94 +422,79 @@
             const courseHeader = document.getElementById('courseHeader');
             const questionText = document.getElementById('questionText');
             const feedbackText = document.getElementById('feedbackText');
-            const backToCoursesBtn = document.getElementById('backToCourses');
-            const userIdDisplay = document.getElementById('userIdDisplay');
-            
-            // Answer buttons and text
+
             const answerBtnA = document.getElementById('answerBtnA');
             const answerBtnB = document.getElementById('answerBtnB');
             const answerBtnC = document.getElementById('answerBtnC');
             const answerBtnD = document.getElementById('answerBtnD');
+            
             const answerTextA = document.getElementById('answerTextA');
             const answerTextB = document.getElementById('answerTextB');
             const answerTextC = document.getElementById('answerTextC');
             const answerTextD = document.getElementById('answerTextD');
-            
-            // UI helper functions
-            function hideAllQuizElements() {
-              quizInputsSection.classList.add('hidden');
-              quizDisplaySection.classList.add('hidden');
-              errorMessage.classList.add('hidden');
-            }
-            
-            function hideAnswerButtons() {
-              answerBtnA.classList.add('hidden');
-              answerBtnB.classList.add('hidden');
-              answerBtnC.classList.add('hidden');
-              answerBtnD.classList.add('hidden');
-            }
-            
-            function showAnswerButtons() {
-              answerBtnA.classList.remove('hidden');
-              answerBtnB.classList.remove('hidden');
-              answerBtnC.classList.remove('hidden');
-              answerBtnD.classList.remove('hidden');
-            }
 
-            function hideAnswerTexts() {
+            // Helper to set select options
+            const setOptions = (selectElement, options) => {
+                selectElement.innerHTML = '';
+                options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.label;
+                    selectElement.appendChild(opt);
+                });
+            };
+
+            // Helper to hide elements
+            const hideAllQuizElements = () => {
+                quizInputsSection.classList.add('hidden');
+                quizDisplaySection.classList.add('hidden');
+                errorMessage.classList.add('hidden');
+            };
+            
+            const hideAnswerButtons = () => {
+                answerBtnA.classList.add('hidden');
+                answerBtnB.classList.add('hidden');
+                answerBtnC.classList.add('hidden');
+                answerBtnD.classList.add('hidden');
+            };
+
+            const showAnswerButtons = () => {
+                answerBtnA.classList.remove('hidden');
+                answerBtnB.classList.remove('hidden');
+                answerBtnC.classList.remove('hidden');
+                answerBtnD.classList.remove('hidden');
+            };
+            
+            const hideAnswerTexts = () => {
               answerTextA.textContent = '';
               answerTextB.textContent = '';
               answerTextC.textContent = '';
               answerTextD.textContent = '';
-            }
-
-            const showSection = (sectionId) => {
-                sections.forEach(section => section.classList.add('hidden'));
-                const targetSection = document.getElementById(sectionId);
-                if (targetSection) {
-                    targetSection.classList.remove('hidden');
-                }
             };
 
+            // Populate college dropdown on page load
             const populateCollegeDropdown = () => {
                 const colleges = Object.keys(collegeMajors);
-                collegeDropdown.innerHTML = '<option value="">Select College</option>';
-                colleges.forEach(college => {
-                    const opt = document.createElement('option');
-                    opt.value = college;
-                    opt.textContent = college;
-                    collegeDropdown.appendChild(opt);
-                });
+                const collegeOptions = [{ label: "Select College", value: "" }, ...colleges.map(college => ({
+                    label: college,
+                    value: college
+                }))];
+                setOptions(collegeDropdown, collegeOptions);
                 collegeDropdown.disabled = false;
             };
 
+            // Populate major dropdown when college is selected
             const populateMajorDropdown = (collegeName) => {
                 const majors = collegeMajors[collegeName] || [];
-                majorDropdown.innerHTML = '<option value="">Select Major</option>';
-                majors.forEach(major => {
-                    const opt = document.createElement('option');
-                    opt.value = major;
-                    opt.textContent = major;
-                    majorDropdown.appendChild(opt);
-                });
+                const majorOptions = [{ label: "Select Major", value: "" }, ...majors.map(major => ({
+                    label: major,
+                    value: major
+                }))];
+                setOptions(majorDropdown, majorOptions);
                 majorDropdown.disabled = false;
             };
-            
-            // Main Event Listeners
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const targetSectionId = button.id.replace('-button', '-section');
-                    showSection(targetSectionId);
-                });
-            });
 
-            interactiveSquares.forEach(square => {
-                square.addEventListener('click', () => {
-                    const targetSectionId = square.getAttribute('data-target');
-                    showSection(targetSectionId);
-                });
-            });
-
+            // Event listeners
             collegeDropdown.addEventListener('change', () => {
                 const selectedCollege = collegeDropdown.value;
                 if (selectedCollege) {
@@ -345,25 +507,14 @@
                 courseInput.value = "";
                 hideAllQuizElements();
             });
-            
-            backToCoursesBtn.addEventListener('click', () => {
-                hideAllQuizElements();
-                showSection('college-courses-section');
-                collegeDropdown.value = '';
-                majorDropdown.innerHTML = '<option value="">Select Major</option>';
-                majorDropdown.disabled = true;
-                courseInput.value = '';
-                courseHeader.classList.add('hidden');
-                // The following lines were not in the original code but are needed to reset the UI
-                questionText.textContent = "Question text will appear here.";
-                feedbackText.textContent = "";
-                hideAnswerButtons();
-                hideAnswerTexts();
-                questionText.classList.add('hidden');
-                quizDisplaySection.classList.add('hidden');
-            });
 
             setCourseBtn.addEventListener('click', async () => {
+                if (!isFirebaseReady) {
+                    errorMessage.textContent = "This feature requires a database connection. Please contact support if this error persists.";
+                    errorMessage.classList.remove('hidden');
+                    return;
+                }
+
                 const college = collegeDropdown.value;
                 const major = majorDropdown.value;
                 const course = courseInput.value.trim();
@@ -371,93 +522,80 @@
                 if (!college || !major || !course) {
                     errorMessage.textContent = "Please complete all fields to set the course.";
                     errorMessage.classList.remove('hidden');
+                    hideAllQuizElements();
                     return;
                 }
-
+                
                 errorMessage.classList.add('hidden');
                 quizInputsSection.classList.remove('hidden');
                 unitDropdown.innerHTML = '<option value="">Loading units...</option>';
                 unitDropdown.disabled = true;
 
-                courseHeader.textContent = `${college} • ${major} • ${course}`;
-                courseHeader.classList.remove('hidden');
-                backToCoursesBtn.classList.remove('hidden');
-
                 try {
-                    const response = await fetch('/api/college?type=units', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({college, course, major})
-                    });
-                    const data = await response.json();
-                    const units = data.units || [];
+                    const units = await getCourseUnits(college, course, major);
+                    const unitOptions = [{ label: "Select Unit", value: "" }, ...units.map(unit => ({
+                        label: unit.label,
+                        value: unit.value
+                    }))];
+                    setOptions(unitDropdown, unitOptions);
+                    unitDropdown.disabled = false;
+                    
+                    courseHeader.textContent = `${college} • ${major} • ${course}`;
+                    courseHeader.classList.remove('hidden');
 
-                    if (units.length > 0) {
-                        unitDropdown.innerHTML = '';
-                        units.forEach(unit => {
-                            const opt = document.createElement('option');
-                            opt.value = unit.value;
-                            opt.textContent = unit.label;
-                            unitDropdown.appendChild(opt);
-                        });
-                        unitDropdown.disabled = false;
-                    }
                 } catch (error) {
                     console.error("Error setting course:", error);
-                    errorMessage.textContent = "Failed to load units. Please try again.";
+                    errorMessage.textContent = `Failed to load units. Error: ${error.message}. Check console for details.`;
                     errorMessage.classList.remove('hidden');
-                    unitDropdown.disabled = true;
-                    unitDropdown.innerHTML = '<option value="">Failed to load units</option>';
+                    quizInputsSection.classList.add('hidden');
                 }
             });
-
+            
             difficultySldr.addEventListener('input', () => {
                 difficultyValue.textContent = difficultySldr.value;
             });
-            
+
             generateBtn.addEventListener('click', async () => {
-                try {
-                    const college = collegeDropdown.value;
-                    const major = majorDropdown.value;
-                    const course = courseInput.value.trim();
-                    const unit = unitDropdown.value;
-                    const topic = topicInput.value;
-                    const difficulty = parseInt(difficultySldr.value);
-
-                    if (!college || !major || !course || !unit || !topic) {
-                        questionText.textContent = "Please fill in all fields.";
-                        questionText.classList.remove('hidden');
-                        hideAnswerButtons();
-                        hideAnswerTexts();
-                        feedbackText.classList.add('hidden');
-                        return;
-                    }
-
-                    questionText.textContent = "Generating question...";
+                if (!isFirebaseReady) {
+                    questionText.textContent = "This feature requires a database connection. Please contact support if this error persists.";
                     questionText.classList.remove('hidden');
-                    quizDisplaySection.classList.remove('hidden');
                     hideAnswerButtons();
                     hideAnswerTexts();
                     feedbackText.classList.add('hidden');
-                    generateBtn.disabled = true;
-                    generateBtn.textContent = 'Generating...';
+                    return;
+                }
+                const college = collegeDropdown.value;
+                const major = majorDropdown.value;
+                const course = courseInput.value;
+                const unit = unitDropdown.value;
+                const topic = topicInput.value;
+                const difficulty = difficultySldr.value;
 
-                    const result = await Promise.race([
-                        fetch('/api/college?type=quiz', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({college, major, course, unit, topic, difficulty})
-                        }).then(r => r.json()),
-                        timeout(15000)
-                    ]);
+                if (!college || !major || !course || !unit || !topic) {
+                    questionText.textContent = "Please fill in all fields.";
+                    questionText.classList.remove('hidden');
+                    hideAnswerButtons();
+                    hideAnswerTexts();
+                    feedbackText.classList.add('hidden');
+                    return;
+                }
 
-                    const content = result.question || '';
-                    const correctIndex = content.indexOf("Correct Answer:");
+                questionText.textContent = "Generating question...";
+                questionText.classList.remove('hidden');
+                quizDisplaySection.classList.remove('hidden');
+                hideAnswerButtons();
+                hideAnswerTexts();
+                feedbackText.classList.add('hidden');
+
+                try {
+                    const result = await generateCollegeQuizQuestion(college, major, course, unit, topic, difficulty);
+                    
+                    const correctIndex = result.indexOf("Correct Answer:");
                     if (correctIndex === -1) throw new Error("Invalid response format: 'Correct Answer:' not found.");
 
-                    const rawQuestionAndOptions = content.substring(0, correctIndex).trim();
-                    const rawCorrectAnswer = content.substring(correctIndex + "Correct Answer:".length).trim();
-
+                    const rawQuestionAndOptions = result.substring(0, correctIndex).trim();
+                    const rawCorrectAnswer = result.substring(correctIndex + "Correct Answer:".length).trim();
+                    
                     const lines = rawQuestionAndOptions.split('\n');
                     const questionIndex = lines.findIndex(line => line.toLowerCase().startsWith("question:"));
                     const optionAIndex = lines.findIndex(line => line.startsWith("A."));
@@ -465,63 +603,265 @@
                     if (questionIndex === -1 || optionAIndex === -1) throw new Error("Invalid response format: Question or options not found.");
 
                     const questionLines = lines.slice(questionIndex, optionAIndex);
-                    const questionTextContent = questionLines.join('\n').replace(/^(Question|Q)\.\s*/i, '').trim();
-                    const optionsText = lines.slice(optionAIndex).join('\n');
+                    const parsedQuestionText = questionLines.join('\n').replace(/^(Question|Q)\.\s*/i, '').trim();
 
+                    const optionsText = lines.slice(optionAIndex).join('\n');
+                    
                     answerOptions = {};
                     const optionMatches = optionsText.match(/[A-D]\.\s*[\s\S]+?(?=\n[B-D]\.|$)/g);
                     if (optionMatches) {
                         optionMatches.forEach(match => {
-                            const key = match[0];
+                            const key = match.trim()[0];
                             const value = match.substring(2).trim();
                             answerOptions[key] = value;
                         });
                     }
-
+                    
                     correctAnswer = rawCorrectAnswer.toUpperCase().match(/[A-D]/)[0];
 
-                    questionText.textContent = questionTextContent;
+                    questionText.textContent = parsedQuestionText;
                     questionText.classList.remove('hidden');
                     showAnswerButtons();
 
-                    ['A','B','C','D'].forEach(letter => {
-                        const textEl = document.getElementById(`answerText${letter}`);
-                        textEl.textContent = answerOptions[letter] || '';
-                        textEl.classList.remove('hidden');
-                    });
-                    
+                    answerTextA.textContent = answerOptions['A'] || '';
+                    answerTextB.textContent = answerOptions['B'] || '';
+                    answerTextC.textContent = answerOptions['C'] || '';
+                    answerTextD.textContent = answerOptions['D'] || '';
+
                 } catch (error) {
                     console.error("Generation error:", error);
-                    questionText.textContent = error.message === "Timeout"
-                        ? "Request timed out. Please try again."
-                        : `Failed to generate question. Error: ${error.message}`;
+                    questionText.textContent = `Failed to generate question. Error: ${error.message}`;
                     questionText.classList.remove('hidden');
                     hideAnswerButtons();
                     hideAnswerTexts();
                     feedbackText.classList.add('hidden');
-                } finally {
-                    generateBtn.disabled = false;
-                    generateBtn.textContent = 'Generate Question';
                 }
             });
 
-            ['A','B','C','D'].forEach(letter => {
-                document.getElementById(`answerBtn${letter}`).addEventListener('click', () => {
-                    if (!correctAnswer) return;
-                    const feedbackEl = document.getElementById('feedbackText');
-                    if (letter.toUpperCase() === correctAnswer) {
-                        feedbackEl.textContent = "✅ Correct!";
-                    } else {
-                        const correctText = answerOptions[correctAnswer] || '';
-                        feedbackEl.textContent = `❌ Incorrect. The correct answer was: ${correctAnswer}. ${correctText}`;
-                    }
-                    feedbackEl.classList.remove('hidden');
-                });
-            });
+            // Quiz answer buttons
+            answerBtnA.addEventListener('click', () => checkAnswer('A'));
+            answerBtnB.addEventListener('click', () => checkAnswer('B'));
+            answerBtnC.addEventListener('click', () => checkAnswer('C'));
+            answerBtnD.addEventListener('click', () => checkAnswer('D'));
+            
+            const checkAnswer = (letter) => {
+                if (!correctAnswer) return;
+                const button = document.getElementById(`answerBtn${letter}`);
+                const correctBtn = document.getElementById(`answerBtn${correctAnswer}`);
 
-            // Initial setup
+                // Clear previous feedback styles
+                [answerBtnA, answerBtnB, answerBtnC, answerBtnD].forEach(btn => {
+                    btn.classList.remove('bg-green-200', 'bg-red-200');
+                });
+
+                if (letter.toUpperCase() === correctAnswer) {
+                    feedbackText.textContent = "✅ Correct!";
+                    button.classList.add('bg-green-200');
+                } else {
+                    const correctText = answerOptions[correctAnswer] || '';
+                    feedbackText.textContent = `❌ Incorrect. The correct answer was: ${correctAnswer}. ${correctText}`;
+                    button.classList.add('bg-red-200');
+                    if (correctBtn) {
+                        correctBtn.classList.add('bg-green-200');
+                    }
+                }
+                feedbackText.classList.remove('hidden');
+            }
+
+            // Backend functions (now in the frontend script)
+            async function getCourseUnits(college, course, major) {
+                console.log("Attempting to get course units...");
+                if (!db || !currentUserId) {
+                    throw new Error("Database or user ID not ready.");
+                }
+
+                const courseId = `${college}-${major}-${course.replace(/\s/g, '-')}`;
+                const docRef = doc(db, 'artifacts', appId, 'users', currentUserId, 'courseUnits', courseId);
+
+                try {
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        console.log("Using cached units from Firestore.");
+                        const cachedUnits = docSnap.data().units;
+                        return JSON.parse(cachedUnits);
+                    }
+                } catch (error) {
+                    console.error("Firestore read failed:", error);
+                    console.warn("Falling back to generating units from API.");
+                }
+                
+                console.log("No cached units found. Generating new units from API...");
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                
+                const systemPrompt = "You are an expert college professor who ONLY provides a JSON array of specific, non-generic unit titles. Do NOT include any text or explanation. The JSON array must have objects with 'label' and 'value' fields.";
+                const userQuery = `List 12 detailed and specific unit names for the course "${course}" offered at ${college} for a ${major} major. Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    "label": { "type": "STRING" },
+                                    "value": { "type": "STRING" }
+                                },
+                                "propertyOrdering": ["label", "value"]
+                            }
+                        }
+                    }
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    
+                    const contentPart = result.candidates?.[0]?.content?.parts?.[0];
+                    if (!contentPart || !contentPart.text) {
+                        throw new Error("Invalid response format from API. Content part is missing.");
+                    }
+                    
+                    const rawText = contentPart.text;
+                    console.log("Raw API response text:", rawText);
+                    
+                    let units;
+                    try {
+                        const jsonMatch = rawText.match(/\[\s*\{[\s\S]*\}\s*\]/);
+                        if (!jsonMatch) {
+                            throw new Error("No valid JSON array found in the response using regex.");
+                        }
+                        units = JSON.parse(jsonMatch[0]);
+                    } catch (parseError) {
+                        console.error("JSON parse failed. Attempting direct parse.", parseError);
+                        try {
+                            units = JSON.parse(rawText);
+                        } catch (directParseError) {
+                             throw new Error("Failed to parse JSON from response. Both direct and regex parsing failed.");
+                        }
+                    }
+
+                    // Save the units to Firestore before returning them
+                    console.log("Saving units to Firestore...");
+                    try {
+                        await setDoc(docRef, { units: JSON.stringify(units) });
+                        console.log("Units saved successfully.");
+                    } catch (saveError) {
+                        console.error("Firestore save failed:", saveError);
+                        console.warn("Continuing without saving to cache.");
+                    }
+                    
+                    return units;
+
+                } catch (error) {
+                    console.error("API error fetching units:", error);
+                    // Fallback to generic units on failure
+                    console.warn("Returning fallback units due to API error.");
+                    const fallbackUnits = [
+                        { label: "Unit 1", value: "Unit 1" },
+                        { label: "Unit 2", value: "Unit 2" },
+                        { label: "Unit 3", value: "Unit 3" }
+                    ];
+                    return fallbackUnits;
+                }
+            }
+
+            async function generateCollegeQuizQuestion(college, major, course, unit, topic, difficulty) {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                const stylesByCategory = {
+                    technical: [
+                        "Code debugging task", "Code writing/building task", "Algorithm optimization", "System architecture analysis", "Output prediction from given code"
+                    ],
+                    analytical: [
+                        "Data interpretation", "Scenario-based problem-solving", "Case study analysis", "Process design question", "Multi-step calculation"
+                    ],
+                    scientific: [
+                        "Experimental design", "Data/graph interpretation", "Diagnosis from observations", "Fieldwork planning", "Calculation-heavy measurement problem"
+                    ]
+                };
+
+                let category;
+                if (["Computer Science", "Information Technology", "Management Information Systems", "Engineering", "Supply Chain Management and Logistics", "Textile Engineering"].includes(major)) {
+                    category = "technical";
+                } else if (["Business Administration", "Business", "Political Science", "Industrial Design"].includes(major)) {
+                    category = "analytical";
+                } else {
+                    category = "scientific";
+                }
+
+                const styleOptions = stylesByCategory[category];
+                const randomStyle = styleOptions[Math.floor(Math.random() * styleOptions.length)];
+
+                let difficultyDescription;
+                if (difficulty >= 1 && difficulty <= 3) {
+                    difficultyDescription = "easy, base-level";
+                } else if (difficulty >= 4 && difficulty <= 7) {
+                    difficultyDescription = "standard, course-appropriate";
+                } else if (difficulty >= 8 && difficulty <= 10) {
+                    difficultyDescription = "extremely difficult, complex, or multi-step";
+                } else {
+                    difficultyDescription = "standard, course-appropriate";
+                }
+
+                const prompt = `You are a college professor designing a rigorous, course-appropriate multiple-choice quiz question.
+                
+                Generate ONE multiple-choice question that:
+                - Bases the entire question's scenario on a verifiable, interesting fact about the chosen ${topic}.
+                - Does NOT explicitly state "Fun fact:". Instead, the fact must be woven seamlessly into the problem statement.
+                - Requires the student to apply concepts from the ${course} and ${unit} to solve a problem related to that fact.
+                - Matches the academic depth of an actual quiz, test, or homework question in a ${course} course at ${college}.
+                - Is specific to the major and reflects the skills actually assessed in the unit "${unit}".
+                - Avoids generic definitions; instead, focus on real techniques, methods, problem-solving, or analysis.
+                - Uses real academic language and structure used in college assessments.
+                - Provides 4 answer choices labeled A–D, with one correct and clearly defensible answer.
+                - Does NOT assume knowledge outside of what’s commonly taught in the selected unit/topic.
+                - If the topic is repeated, use a different fact for the new question.
+                - question output format should vary depending on ${stylesByCategory} and ${difficulty} offering word problems, code block debugging/correcting, math problems, etc. 
+                
+                Return ONLY in this format:
+                
+                Question: [Your question here]
+                A. [Option A]
+                B. [Option B]
+                C. [Option C]
+                D. [Option D]
+                Correct Answer: [A/B/C/D]`;
+                
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        temperature: 0.75,
+                    },
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    const content = result.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                    return content.trim();
+                } catch (error) {
+                    console.error("API error generating question:", error);
+                    throw new Error("Failed to generate college-level question.");
+                }
+            }
+
+            // Start the application after the DOM is loaded
+            await initializeFirebase();
             populateCollegeDropdown();
-            showSection('home-section');
         });
     </script>
 </body>
