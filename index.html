@@ -38,8 +38,187 @@
         window.userId = null;
         window.courseUnitsRef = null;
 
-        // Initialize Firebase and authenticate user
         document.addEventListener('DOMContentLoaded', async () => {
+
+            const navButtons = document.querySelectorAll('nav .nav-button');
+            const interactiveSquares = document.querySelectorAll('.interactive-square');
+            const sections = document.querySelectorAll('.website-section');
+            
+            let correctAnswer = '';
+            
+            const collegeMajors = {
+                "Coastal Carolina University": [
+                    "Marine Science", "Business Administration", "Computer Science",
+                    "Exercise and Sport Science", "Physical Education"
+                ],
+                "North Carolina State University": [
+                    "Engineering", "Computer Science", "Agricultural Sciences",
+                    "Supply Chain Management and Logistics", "Textile Engineering"
+                ],
+                "University of Alabama": [
+                    "Political Science", "Nursing", "Business",
+                    "Management Information Systems", "Psychology"
+                ],
+                "Wake Technical Community College": [
+                    "Liberal Arts", "Information Technology", "Business",
+                    "Registered Nursing", "Construction", "GM ASEP"
+                ],
+                "Georgia Institute of Technology": [
+                    "Aerospace Engineering", "Computer Science", "Industrial Design",
+                    "Biomedical Engineering"
+                ]
+            };
+
+            const showSection = (sectionId) => {
+                sections.forEach(section => section.classList.add('hidden'));
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                }
+            };
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetSectionId = button.id.replace('-button', '-section');
+                    showSection(targetSectionId);
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                });
+            });
+
+            interactiveSquares.forEach(square => {
+                square.addEventListener('click', () => {
+                    const targetSectionId = square.getAttribute('data-target');
+                    showSection(targetSectionId);
+                });
+            });
+
+            const collegeDropdown = document.getElementById('collegeDropdown');
+            const majorDropdown = document.getElementById('majorDropdown');
+            const courseInput = document.getElementById('courseInput');
+            const setCourseBtn = document.getElementById('setCourse');
+            const errorMessage = document.getElementById('errorMessage');
+            const quizInputsSection = document.getElementById('quiz-inputs-section');
+            const unitDropdown = document.getElementById('unitDropdown');
+            const topicInput = document.getElementById('topicInput');
+            const difficultySldr = document.getElementById('difficultySldr');
+            const difficultyValue = document.getElementById('difficultyValue');
+            const generateBtn = document.getElementById('generateBtn');
+            const quizDisplaySection = document.getElementById('quiz-display-section');
+            const courseHeader = document.getElementById('courseHeader');
+            const questionText = document.getElementById('questionText');
+            const feedbackText = document.getElementById('feedbackText');
+            const backToCoursesBtn = document.getElementById('backToCourses');
+
+            const answerBtnA = document.getElementById('answerBtnA');
+            const answerBtnB = document.getElementById('answerBtnB');
+            const answerBtnC = document.getElementById('answerBtnC');
+            const answerBtnD = document.getElementById('answerBtnD');
+            
+            const answerTextA = document.getElementById('answerTextA');
+            const answerTextB = document.getElementById('answerTextB');
+            const answerTextC = document.getElementById('answerTextC');
+            const answerTextD = document.getElementById('answerTextD');
+
+            const answerButtons = [answerBtnA, answerBtnB, answerBtnC, answerBtnD];
+            
+            const setOptions = (selectElement, options) => {
+                selectElement.innerHTML = '';
+                options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.label;
+                    selectElement.appendChild(opt);
+                });
+            };
+
+            const hideAllQuizElements = () => {
+                quizInputsSection.classList.add('hidden');
+                quizDisplaySection.classList.add('hidden');
+                errorMessage.classList.add('hidden');
+            };
+            
+            const hideAnswerButtons = () => {
+                answerBtnA.classList.add('hidden');
+                answerBtnB.classList.add('hidden');
+                answerBtnC.classList.add('hidden');
+                answerBtnD.classList.add('hidden');
+            };
+
+            const showAnswerButtons = () => {
+                answerBtnA.classList.remove('hidden');
+                answerBtnB.classList.remove('hidden');
+                answerBtnC.classList.remove('hidden');
+                answerBtnD.classList.remove('hidden');
+            };
+            
+            const hideAnswerTexts = () => {
+                answerTextA.textContent = '';
+                answerTextB.textContent = '';
+                answerTextC.textContent = '';
+                answerTextD.textContent = '';
+            };
+            
+            const resetQuiz = () => {
+                questionText.textContent = "Question text will appear here.";
+                feedbackText.textContent = "";
+                hideAnswerButtons();
+                hideAnswerTexts();
+                questionText.classList.add('hidden');
+                quizDisplaySection.classList.add('hidden');
+                answerButtons.forEach(btn => btn.classList.remove('bg-red-500', 'bg-green-500', 'text-white'));
+            };
+
+            const populateCollegeDropdown = () => {
+                const colleges = Object.keys(collegeMajors);
+                const collegeOptions = [{ label: "Select College", value: "" }, ...colleges.map(college => ({
+                    label: college,
+                    value: college
+                }))];
+                setOptions(collegeDropdown, collegeOptions);
+                collegeDropdown.disabled = false;
+            };
+
+            const populateMajorDropdown = (collegeName) => {
+                const majors = collegeMajors[collegeName] || [];
+                const majorOptions = [{ label: "Select Major", value: "" }, ...majors.map(major => ({
+                    label: major,
+                    value: major
+                }))];
+                setOptions(majorDropdown, majorOptions);
+                majorDropdown.disabled = false;
+            };
+            
+            collegeDropdown.addEventListener('change', () => {
+                const selectedCollege = collegeDropdown.value;
+                if (selectedCollege) {
+                    populateMajorDropdown(selectedCollege);
+                } else {
+                    majorDropdown.innerHTML = '<option value="">Select Major</option>';
+                    majorDropdown.disabled = true;
+                }
+                majorDropdown.value = "";
+                courseInput.value = "";
+                hideAllQuizElements();
+                resetQuiz();
+            });
+            
+            backToCoursesBtn.addEventListener('click', () => {
+                hideAllQuizElements();
+                showSection('college-courses-section');
+                collegeDropdown.value = '';
+                majorDropdown.innerHTML = '<option value="">Select Major</option>';
+                majorDropdown.disabled = true;
+                courseInput.value = '';
+                courseHeader.classList.add('hidden');
+                resetQuiz();
+            });
+
+            difficultySldr.addEventListener('input', () => {
+                difficultyValue.textContent = difficultySldr.value;
+            });
+
+            // Initialize Firebase and authenticate user
             try {
                 // Mandatory global variables from the canvas environment
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
@@ -86,184 +265,6 @@
                     }
                 });
 
-                const navButtons = document.querySelectorAll('nav .nav-button');
-                const interactiveSquares = document.querySelectorAll('.interactive-square');
-                const sections = document.querySelectorAll('.website-section');
-                
-                let correctAnswer = '';
-                
-                const collegeMajors = {
-                    "Coastal Carolina University": [
-                        "Marine Science", "Business Administration", "Computer Science",
-                        "Exercise and Sport Science", "Physical Education"
-                    ],
-                    "North Carolina State University": [
-                        "Engineering", "Computer Science", "Agricultural Sciences",
-                        "Supply Chain Management and Logistics", "Textile Engineering"
-                    ],
-                    "University of Alabama": [
-                        "Political Science", "Nursing", "Business",
-                        "Management Information Systems", "Psychology"
-                    ],
-                    "Wake Technical Community College": [
-                        "Liberal Arts", "Information Technology", "Business",
-                        "Registered Nursing", "Construction", "GM ASEP"
-                    ],
-                    "Georgia Institute of Technology": [
-                        "Aerospace Engineering", "Computer Science", "Industrial Design",
-                        "Biomedical Engineering"
-                    ]
-                };
-
-                const showSection = (sectionId) => {
-                    sections.forEach(section => section.classList.add('hidden'));
-                    const targetSection = document.getElementById(sectionId);
-                    if (targetSection) {
-                        targetSection.classList.remove('hidden');
-                    }
-                };
-
-                navButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        const targetSectionId = button.id.replace('-button', '-section');
-                        showSection(targetSectionId);
-                        navButtons.forEach(btn => btn.classList.remove('active'));
-                        button.classList.add('active');
-                    });
-                });
-
-                interactiveSquares.forEach(square => {
-                    square.addEventListener('click', () => {
-                        const targetSectionId = square.getAttribute('data-target');
-                        showSection(targetSectionId);
-                    });
-                });
-
-                const collegeDropdown = document.getElementById('collegeDropdown');
-                const majorDropdown = document.getElementById('majorDropdown');
-                const courseInput = document.getElementById('courseInput');
-                const setCourseBtn = document.getElementById('setCourse');
-                const errorMessage = document.getElementById('errorMessage');
-                const quizInputsSection = document.getElementById('quiz-inputs-section');
-                const unitDropdown = document.getElementById('unitDropdown');
-                const topicInput = document.getElementById('topicInput');
-                const difficultySldr = document.getElementById('difficultySldr');
-                const difficultyValue = document.getElementById('difficultyValue');
-                const generateBtn = document.getElementById('generateBtn');
-                const quizDisplaySection = document.getElementById('quiz-display-section');
-                const courseHeader = document.getElementById('courseHeader');
-                const questionText = document.getElementById('questionText');
-                const feedbackText = document.getElementById('feedbackText');
-                const backToCoursesBtn = document.getElementById('backToCourses');
-
-                const answerBtnA = document.getElementById('answerBtnA');
-                const answerBtnB = document.getElementById('answerBtnB');
-                const answerBtnC = document.getElementById('answerBtnC');
-                const answerBtnD = document.getElementById('answerBtnD');
-                
-                const answerTextA = document.getElementById('answerTextA');
-                const answerTextB = document.getElementById('answerTextB');
-                const answerTextC = document.getElementById('answerTextC');
-                const answerTextD = document.getElementById('answerTextD');
-
-                const answerButtons = [answerBtnA, answerBtnB, answerBtnC, answerBtnD];
-                
-                const setOptions = (selectElement, options) => {
-                    selectElement.innerHTML = '';
-                    options.forEach(option => {
-                        const opt = document.createElement('option');
-                        opt.value = option.value;
-                        opt.textContent = option.label;
-                        selectElement.appendChild(opt);
-                    });
-                };
-
-                const hideAllQuizElements = () => {
-                    quizInputsSection.classList.add('hidden');
-                    quizDisplaySection.classList.add('hidden');
-                    errorMessage.classList.add('hidden');
-                };
-                
-                const hideAnswerButtons = () => {
-                    answerBtnA.classList.add('hidden');
-                    answerBtnB.classList.add('hidden');
-                    answerBtnC.classList.add('hidden');
-                    answerBtnD.classList.add('hidden');
-                };
-
-                const showAnswerButtons = () => {
-                    answerBtnA.classList.remove('hidden');
-                    answerBtnB.classList.remove('hidden');
-                    answerBtnC.classList.remove('hidden');
-                    answerBtnD.classList.remove('hidden');
-                };
-                
-                const hideAnswerTexts = () => {
-                    answerTextA.textContent = '';
-                    answerTextB.textContent = '';
-                    answerTextC.textContent = '';
-                    answerTextD.textContent = '';
-                };
-                
-                const resetQuiz = () => {
-                    questionText.textContent = "Question text will appear here.";
-                    feedbackText.textContent = "";
-                    hideAnswerButtons();
-                    hideAnswerTexts();
-                    questionText.classList.add('hidden');
-                    quizDisplaySection.classList.add('hidden');
-                    answerButtons.forEach(btn => btn.classList.remove('bg-red-500', 'bg-green-500', 'text-white'));
-                };
-
-                const populateCollegeDropdown = () => {
-                    const colleges = Object.keys(collegeMajors);
-                    const collegeOptions = [{ label: "Select College", value: "" }, ...colleges.map(college => ({
-                        label: college,
-                        value: college
-                    }))];
-                    setOptions(collegeDropdown, collegeOptions);
-                    collegeDropdown.disabled = false;
-                };
-
-                const populateMajorDropdown = (collegeName) => {
-                    const majors = collegeMajors[collegeName] || [];
-                    const majorOptions = [{ label: "Select Major", value: "" }, ...majors.map(major => ({
-                        label: major,
-                        value: major
-                    }))];
-                    setOptions(majorDropdown, majorOptions);
-                    majorDropdown.disabled = false;
-                };
-                
-                collegeDropdown.addEventListener('change', () => {
-                    const selectedCollege = collegeDropdown.value;
-                    if (selectedCollege) {
-                        populateMajorDropdown(selectedCollege);
-                    } else {
-                        majorDropdown.innerHTML = '<option value="">Select Major</option>';
-                        majorDropdown.disabled = true;
-                    }
-                    majorDropdown.value = "";
-                    courseInput.value = "";
-                    hideAllQuizElements();
-                    resetQuiz();
-                });
-                
-                backToCoursesBtn.addEventListener('click', () => {
-                    hideAllQuizElements();
-                    showSection('college-courses-section');
-                    collegeDropdown.value = '';
-                    majorDropdown.innerHTML = '<option value="">Select Major</option>';
-                    majorDropdown.disabled = true;
-                    courseInput.value = '';
-                    courseHeader.classList.add('hidden');
-                    resetQuiz();
-                });
-
-                difficultySldr.addEventListener('input', () => {
-                    difficultyValue.textContent = difficultySldr.value;
-                });
-                
                 setCourseBtn.addEventListener('click', async () => {
                     console.log("Set Course button clicked.");
                     const college = collegeDropdown.value;
