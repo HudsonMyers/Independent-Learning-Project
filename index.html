@@ -178,13 +178,57 @@
     </div>
 
     <script type="module">
+        let correctAnswer = '';
+        let answerOptions = {};
+
+        const collegeMajors = {
+            "Coastal Carolina University": [
+                "Marine Science",
+                "Business Administration",
+                "Computer Science",
+                "Exercise and Sport Science",
+                "Physical Education"
+            ],
+            "North Carolina State University": [
+                "Engineering",
+                "Computer Science",
+                "Agricultural Sciences",
+                "Supply Chain Management and Logistics",
+                "Textile Engineering"
+            ],
+            "University of Alabama": [
+                "Political Science",
+                "Nursing",
+                "Business",
+                "Management Information Systems",
+                "Psychology"
+            ],
+            "Wake Technical Community College": [
+                "Liberal Arts",
+                "Information Technology",
+                "Business",
+                "Registered Nursing",
+                "Construction",
+                "GM ASEP"
+            ],
+            "Georgia Institute of Technology": [
+                "Aerospace Engineering",
+                "Computer Science",
+                "Industrial Design",
+                "Biomedical Engineering"
+            ]
+        };
+        
+        function timeout(ms) {
+            return new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), ms));
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             // General UI elements and state
             const navButtons = document.querySelectorAll('nav .nav-button');
             const interactiveSquares = document.querySelectorAll('.interactive-square');
             const sections = document.querySelectorAll('.website-section');
-            let correctAnswer = '';
-
+            
             // Quiz-related DOM elements
             const collegeDropdown = document.getElementById('collegeDropdown');
             const majorDropdown = document.getElementById('majorDropdown');
@@ -214,31 +258,34 @@
             const answerTextC = document.getElementById('answerTextC');
             const answerTextD = document.getElementById('answerTextD');
             
-            // Hardcoded college/major data
-            const collegeMajors = {
-                "Coastal Carolina University": [
-                    "Marine Science", "Business Administration", "Computer Science",
-                    "Exercise and Sport Science", "Physical Education"
-                ],
-                "North Carolina State University": [
-                    "Engineering", "Computer Science", "Agricultural Sciences",
-                    "Supply Chain Management and Logistics", "Textile Engineering"
-                ],
-                "University of Alabama": [
-                    "Political Science", "Nursing", "Business",
-                    "Management Information Systems", "Psychology"
-                ],
-                "Wake Technical Community College": [
-                    "Liberal Arts", "Information Technology", "Business",
-                    "Registered Nursing", "Construction", "GM ASEP"
-                ],
-                "Georgia Institute of Technology": [
-                    "Aerospace Engineering", "Computer Science", "Industrial Design",
-                    "Biomedical Engineering"
-                ]
-            };
+            // UI helper functions
+            function hideAllQuizElements() {
+              quizInputsSection.classList.add('hidden');
+              quizDisplaySection.classList.add('hidden');
+              errorMessage.classList.add('hidden');
+            }
+            
+            function hideAnswerButtons() {
+              answerBtnA.classList.add('hidden');
+              answerBtnB.classList.add('hidden');
+              answerBtnC.classList.add('hidden');
+              answerBtnD.classList.add('hidden');
+            }
+            
+            function showAnswerButtons() {
+              answerBtnA.classList.remove('hidden');
+              answerBtnB.classList.remove('hidden');
+              answerBtnC.classList.remove('hidden');
+              answerBtnD.classList.remove('hidden');
+            }
 
-            // Helper function to show a specific section and hide all others
+            function hideAnswerTexts() {
+              answerTextA.textContent = '';
+              answerTextB.textContent = '';
+              answerTextC.textContent = '';
+              answerTextD.textContent = '';
+            }
+
             const showSection = (sectionId) => {
                 sections.forEach(section => section.classList.add('hidden'));
                 const targetSection = document.getElementById(sectionId);
@@ -247,87 +294,30 @@
                 }
             };
 
-            // UI helper functions
-            const setOptions = (selectElement, options) => {
-                selectElement.innerHTML = '';
-                options.forEach(option => {
-                    const opt = document.createElement('option');
-                    opt.value = option.value;
-                    opt.textContent = option.label;
-                    selectElement.appendChild(opt);
-                });
-            };
-
-            const hideAllQuizElements = () => {
-                quizInputsSection.classList.add('hidden');
-                quizDisplaySection.classList.add('hidden');
-                errorMessage.classList.add('hidden');
-            };
-            
-            const hideAnswerButtons = () => {
-                answerBtnA.classList.add('hidden');
-                answerBtnB.classList.add('hidden');
-                answerBtnC.classList.add('hidden');
-                answerBtnD.classList.add('hidden');
-            };
-
-            const showAnswerButtons = () => {
-                answerBtnA.classList.remove('hidden');
-                answerBtnB.classList.remove('hidden');
-                answerBtnC.classList.remove('hidden');
-                answerBtnD.classList.remove('hidden');
-            };
-            
-            const hideAnswerTexts = () => {
-              answerTextA.textContent = '';
-              answerTextB.textContent = '';
-              answerTextC.textContent = '';
-              answerTextD.textContent = '';
-            };
-            
-            const resetQuiz = () => {
-                questionText.textContent = "Question text will appear here.";
-                feedbackText.textContent = "";
-                hideAnswerButtons();
-                hideAnswerTexts();
-                questionText.classList.add('hidden');
-                quizDisplaySection.classList.add('hidden');
-            };
-
-            // Function to populate college and major dropdowns
             const populateCollegeDropdown = () => {
                 const colleges = Object.keys(collegeMajors);
-                const collegeOptions = [{ label: "Select College", value: "" }, ...colleges.map(college => ({
-                    label: college,
-                    value: college
-                }))];
-                setOptions(collegeDropdown, collegeOptions);
+                collegeDropdown.innerHTML = '<option value="">Select College</option>';
+                colleges.forEach(college => {
+                    const opt = document.createElement('option');
+                    opt.value = college;
+                    opt.textContent = college;
+                    collegeDropdown.appendChild(opt);
+                });
                 collegeDropdown.disabled = false;
             };
 
             const populateMajorDropdown = (collegeName) => {
                 const majors = collegeMajors[collegeName] || [];
-                const majorOptions = [{ label: "Select Major", value: "" }, ...majors.map(major => ({
-                    label: major,
-                    value: major
-                }))];
-                setOptions(majorDropdown, majorOptions);
+                majorDropdown.innerHTML = '<option value="">Select Major</option>';
+                majors.forEach(major => {
+                    const opt = document.createElement('option');
+                    opt.value = major;
+                    opt.textContent = major;
+                    majorDropdown.appendChild(opt);
+                });
                 majorDropdown.disabled = false;
             };
             
-            // Helper function to mock unit generation
-            const generateUnits = async (college, major, course) => {
-                // Mock API call to get units
-                const mockUnits = {
-                    "Intro to Psychology": ["Unit 1: Foundations", "Unit 2: Biological Bases", "Unit 3: Sensation and Perception"],
-                    "Computer Science": ["Unit 1: Intro to Programming", "Unit 2: Data Structures", "Unit 3: Algorithms"],
-                    // Add more mock data as needed
-                };
-                const key = course.trim();
-                const units = mockUnits[key] || ["Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5"];
-                return units.map(unit => ({ label: unit, value: unit }));
-            };
-
             // Main Event Listeners
             navButtons.forEach(button => {
                 button.addEventListener('click', () => {
@@ -364,7 +354,13 @@
                 majorDropdown.disabled = true;
                 courseInput.value = '';
                 courseHeader.classList.add('hidden');
-                resetQuiz();
+                // The following lines were not in the original code but are needed to reset the UI
+                questionText.textContent = "Question text will appear here.";
+                feedbackText.textContent = "";
+                hideAnswerButtons();
+                hideAnswerTexts();
+                questionText.classList.add('hidden');
+                quizDisplaySection.classList.add('hidden');
             });
 
             setCourseBtn.addEventListener('click', async () => {
@@ -388,190 +384,136 @@
                 backToCoursesBtn.classList.remove('hidden');
 
                 try {
-                    const units = await generateUnits(college, major, course);
-                    const unitOptions = [{ label: "Select Unit", value: "" }, ...units.map(unit => ({
-                        label: unit.label,
-                        value: unit.value
-                    }))];
-                    setOptions(unitDropdown, unitOptions);
-                    unitDropdown.disabled = false;
+                    const response = await fetch('/api/college?type=units', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({college, course, major})
+                    });
+                    const data = await response.json();
+                    const units = data.units || [];
+
+                    if (units.length > 0) {
+                        unitDropdown.innerHTML = '';
+                        units.forEach(unit => {
+                            const opt = document.createElement('option');
+                            opt.value = unit.value;
+                            opt.textContent = unit.label;
+                            unitDropdown.appendChild(opt);
+                        });
+                        unitDropdown.disabled = false;
+                    }
                 } catch (error) {
-                    console.error("Error generating units:", error);
-                    errorMessage.textContent = "Failed to generate units. Please try again.";
+                    console.error("Error setting course:", error);
+                    errorMessage.textContent = "Failed to load units. Please try again.";
                     errorMessage.classList.remove('hidden');
+                    unitDropdown.disabled = true;
+                    unitDropdown.innerHTML = '<option value="">Failed to load units</option>';
                 }
             });
 
             difficultySldr.addEventListener('input', () => {
                 difficultyValue.textContent = difficultySldr.value;
             });
-
+            
             generateBtn.addEventListener('click', async () => {
-                // **FIXED:** Variables are now correctly accessed inside this function
-                const college = collegeDropdown.value;
-                const major = majorDropdown.value;
-                const course = courseInput.value;
-                const unit = unitDropdown.value;
-                const topic = topicInput.value;
-                const difficulty = difficultySldr.value;
+                try {
+                    const college = collegeDropdown.value;
+                    const major = majorDropdown.value;
+                    const course = courseInput.value.trim();
+                    const unit = unitDropdown.value;
+                    const topic = topicInput.value;
+                    const difficulty = parseInt(difficultySldr.value);
 
-                if (!college || !major || !course || !unit || !topic) {
-                    questionText.textContent = "Please fill in all fields.";
+                    if (!college || !major || !course || !unit || !topic) {
+                        questionText.textContent = "Please fill in all fields.";
+                        questionText.classList.remove('hidden');
+                        hideAnswerButtons();
+                        hideAnswerTexts();
+                        feedbackText.classList.add('hidden');
+                        return;
+                    }
+
+                    questionText.textContent = "Generating question...";
+                    questionText.classList.remove('hidden');
+                    quizDisplaySection.classList.remove('hidden');
+                    hideAnswerButtons();
+                    hideAnswerTexts();
+                    feedbackText.classList.add('hidden');
+                    generateBtn.disabled = true;
+                    generateBtn.textContent = 'Generating...';
+
+                    const result = await Promise.race([
+                        fetch('/api/college?type=quiz', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify({college, major, course, unit, topic, difficulty})
+                        }).then(r => r.json()),
+                        timeout(15000)
+                    ]);
+
+                    const content = result.question || '';
+                    const correctIndex = content.indexOf("Correct Answer:");
+                    if (correctIndex === -1) throw new Error("Invalid response format: 'Correct Answer:' not found.");
+
+                    const rawQuestionAndOptions = content.substring(0, correctIndex).trim();
+                    const rawCorrectAnswer = content.substring(correctIndex + "Correct Answer:".length).trim();
+
+                    const lines = rawQuestionAndOptions.split('\n');
+                    const questionIndex = lines.findIndex(line => line.toLowerCase().startsWith("question:"));
+                    const optionAIndex = lines.findIndex(line => line.startsWith("A."));
+
+                    if (questionIndex === -1 || optionAIndex === -1) throw new Error("Invalid response format: Question or options not found.");
+
+                    const questionLines = lines.slice(questionIndex, optionAIndex);
+                    const questionTextContent = questionLines.join('\n').replace(/^(Question|Q)\.\s*/i, '').trim();
+                    const optionsText = lines.slice(optionAIndex).join('\n');
+
+                    answerOptions = {};
+                    const optionMatches = optionsText.match(/[A-D]\.\s*[\s\S]+?(?=\n[B-D]\.|$)/g);
+                    if (optionMatches) {
+                        optionMatches.forEach(match => {
+                            const key = match[0];
+                            const value = match.substring(2).trim();
+                            answerOptions[key] = value;
+                        });
+                    }
+
+                    correctAnswer = rawCorrectAnswer.toUpperCase().match(/[A-D]/)[0];
+
+                    questionText.textContent = questionTextContent;
+                    questionText.classList.remove('hidden');
+                    showAnswerButtons();
+
+                    ['A','B','C','D'].forEach(letter => {
+                        const textEl = document.getElementById(`answerText${letter}`);
+                        textEl.textContent = answerOptions[letter] || '';
+                        textEl.classList.remove('hidden');
+                    });
+                    
+                } catch (error) {
+                    console.error("Generation error:", error);
+                    questionText.textContent = error.message === "Timeout"
+                        ? "Request timed out. Please try again."
+                        : `Failed to generate question. Error: ${error.message}`;
                     questionText.classList.remove('hidden');
                     hideAnswerButtons();
                     hideAnswerTexts();
                     feedbackText.classList.add('hidden');
-                    return;
-                }
-
-                questionText.textContent = "Generating question...";
-                questionText.classList.remove('hidden');
-                quizDisplaySection.classList.remove('hidden');
-                hideAnswerButtons();
-                hideAnswerTexts();
-                feedbackText.classList.add('hidden');
-                generateBtn.disabled = true;
-                generateBtn.textContent = 'Generating...';
-
-                try {
-                    // Determine category for prompt
-                    let category;
-                    if (["Computer Science", "Information Technology", "Management Information Systems", "Engineering", "Supply Chain Management and Logistics", "Textile Engineering"].includes(major)) {
-                        category = "technical";
-                    } else if (["Business Administration", "Business", "Political Science", "Industrial Design"].includes(major)) {
-                        category = "analytical";
-                    } else {
-                        category = "scientific";
-                    }
-                    
-                    const stylesByCategory = {
-                        technical: [
-                          "Code debugging task",
-                          "Code writing/building task",
-                          "Algorithm optimization",
-                          "System architecture analysis",
-                          "Output prediction from given code"
-                        ],
-                        analytical: [
-                          "Data interpretation",
-                          "Scenario-based problem-solving",
-                          "Case study analysis",
-                          "Process design question",
-                          "Multi-step calculation"
-                        ],
-                        scientific: [
-                          "Experimental design",
-                          "Data/graph interpretation",
-                          "Diagnosis from observations",
-                          "Fieldwork planning",
-                          "Calculation-heavy measurement problem"
-                        ]
-                    };
-                    const styleOptions = stylesByCategory[category];
-                    const randomStyle = styleOptions[Math.floor(Math.random() * styleOptions.length)];
-
-                    let difficultyDescription;
-                    if (difficulty >= 1 && difficulty <= 3) {
-                      difficultyDescription = "easy, base-level";
-                    } else if (difficulty >= 4 && difficulty <= 7) {
-                      difficultyDescription = "standard, course-appropriate";
-                    } else if (difficulty >= 8 && difficulty <= 10) {
-                      difficultyDescription = "extremely difficult, complex, or multi-step";
-                    } else {
-                      difficultyDescription = "standard, course-appropriate";
-                    }
-
-                    const prompt = `You are a college professor designing a rigorous, course-appropriate multiple-choice quiz question.                    
-                    Generate an **${difficultyDescription}** question in the style of a **${randomStyle.toLowerCase()}**.
-                    
-                    Major: ${major}
-                    Course: ${course}
-                    Unit: ${unit}
-                    Topic: ${topic}
-                    
-                    Create ONE multiple-choice question that:
-                    - **Bases the entire question's scenario on a verifiable, interesting fact about the chosen ${topic}.**
-                    - **Does NOT explicitly state "Fun fact:"**. Instead, the fact must be woven seamlessly into the problem statement.
-                    - question output format should vary depending on ${stylesByCategory} and ${difficulty} offering word problems, code block debugging/correcting, math problems, etc. 
-                    - Requires the student to apply concepts from the ${course} and ${unit} to solve a problem related to that fact.
-                    - Matches the academic depth of an actual quiz, test, or homework question in a ${course} course at ${college}.
-                    - Is specific to the major and reflects the skills actually assessed in the unit "${unit}".
-                    - Avoids generic definitions; instead, focus on real techniques, methods, problem-solving, or analysis.
-                    - Uses real academic language and structure used in college assessments.
-                    - Provides 4 answer choices labeled A–D, with one correct and clearly defensible answer.
-                    - Does NOT assume knowledge outside of what’s commonly taught in the selected unit/topic.
-                    - If the topic is repeated, use a different fact for the new question.`;
-                    
-                    const payload = {
-                        contents: [{ parts: [{ text: prompt }] }],
-                        tools: [{ "google_search": {} }],
-                        systemInstruction: {
-                            parts: [{ text: "You are a world-class college professor specializing in quiz question design. Provide a multiple-choice question with 4 options and the correct answer, based on the user's input." }]
-                        },
-                    };
-
-                    const apiKey = "";
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(`API call failed: ${JSON.stringify(errorData)}`);
-                    }
-
-                    const result = await response.json();
-                    const content = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-                    
-                    if (!content) {
-                        throw new Error("Invalid response format: Content is empty.");
-                    }
-
-                    const lines = content.trim().split('\n');
-                    const question = lines.find(line => line.startsWith('Question:') || line.startsWith('Q.')).replace(/^(Question|Q)\.\s*/, '').trim();
-                    const options = lines.filter(line => /^[A-D]\./.test(line)).map(line => line.substring(3).trim());
-                    const answerLine = lines.find(line => line.startsWith('Correct Answer:'));
-                    const answer = answerLine ? answerLine.substring(answerLine.indexOf(':') + 1).trim() : '';
-
-                    questionText.textContent = question;
-                    answerTextA.textContent = options[0];
-                    answerTextB.textContent = options[1];
-                    answerTextC.textContent = options[2];
-                    answerTextD.textContent = options[3];
-                    
-                    // Assign the full text of the correct answer, not just the letter
-                    correctAnswer = answer;
-
-                    showAnswerButtons();
-                    questionText.classList.remove('hidden');
-
-                } catch (error) {
-                    console.error("Error generating question:", error);
-                    questionText.textContent = "Failed to generate a question. Please try again.";
-                    hideAnswerButtons();
                 } finally {
                     generateBtn.disabled = false;
                     generateBtn.textContent = 'Generate Question';
                 }
             });
-            
-            // Logic for checking the user's answer
+
             ['A','B','C','D'].forEach(letter => {
                 document.getElementById(`answerBtn${letter}`).addEventListener('click', () => {
                     if (!correctAnswer) return;
                     const feedbackEl = document.getElementById('feedbackText');
-                    
-                    // **FIXED:** Now checks the text of the selected button against the correct answer text
-                    const selectedAnswerText = document.getElementById(`answerText${letter}`).textContent;
-
-                    if (selectedAnswerText === correctAnswer) {
+                    if (letter.toUpperCase() === correctAnswer) {
                         feedbackEl.textContent = "✅ Correct!";
                     } else {
-                        feedbackEl.textContent = `❌ Incorrect. The correct answer was: ${correctAnswer}.`;
+                        const correctText = answerOptions[correctAnswer] || '';
+                        feedbackEl.textContent = `❌ Incorrect. The correct answer was: ${correctAnswer}. ${correctText}`;
                     }
                     feedbackEl.classList.remove('hidden');
                 });
