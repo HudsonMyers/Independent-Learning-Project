@@ -1,45 +1,26 @@
 import fetch from "node-fetch";
 
-// Keep the full collegeMajors mapping exactly as in your original code
+// Note: In a real-world application, this API key should be stored in an environment variable, not hardcoded.
+const OPENAI_API_KEY = "sk-proj-761h8f7J9Yj3e4E8w7jT2z0h1d7G7C9F9l6c4O7B3n6M3j7P";
+
 const collegeMajors = {
   "Coastal Carolina University": [
-    "Marine Science",
-    "Business Administration",
-    "Computer Science",
-    "Exercise and Sport Science",
-    "Physical Education"
+    "Marine Science", "Business Administration", "Computer Science", "Exercise and Sport Science", "Physical Education"
   ],
   "North Carolina State University": [
-    "Engineering",
-    "Computer Science",
-    "Agricultural Sciences",
-    "Supply Chain Management and Logistics",
-    "Textile Engineering"
+    "Engineering", "Computer Science", "Agricultural Sciences", "Supply Chain Management and Logistics", "Textile Engineering"
   ],
   "University of Alabama": [
-    "Political Science",
-    "Nursing",
-    "Business",
-    "Management Information Systems",
-    "Psychology"
+    "Political Science", "Nursing", "Business", "Management Information Systems", "Psychology"
   ],
   "Wake Technical Community College": [
-    "Liberal Arts",
-    "Information Technology",
-    "Business",
-    "Registered Nursing",
-    "Construction",
-    "GM ASEP"
+    "Liberal Arts", "Information Technology", "Business", "Registered Nursing", "Construction", "GM ASEP"
   ],
   "Georgia Institute of Technology": [
-    "Aerospace Engineering",
-    "Computer Science",
-    "Industrial Design",
-    "Biomedical Engineering"
+    "Aerospace Engineering", "Computer Science", "Industrial Design", "Biomedical Engineering"
   ]
 };
 
-// Helper to detect generic units
 function isGenericUnits(units) {
   if (!Array.isArray(units)) return true;
   if (units.length < 2) return true;
@@ -47,9 +28,7 @@ function isGenericUnits(units) {
   return units.every(u => genericLabels.has(u.label) && u.label === u.value);
 }
 
-// Helper to call OpenAI
 async function callOpenAI(prompt) {
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -76,7 +55,6 @@ async function callOpenAI(prompt) {
   return data.choices?.[0]?.message?.content;
 }
 
-// New, more robust function to get units with a guaranteed fallback
 async function getUnitsWithFallback(basePrompt) {
   try {
     const content = await callOpenAI(basePrompt);
@@ -92,8 +70,7 @@ async function getUnitsWithFallback(basePrompt) {
   } catch (e) {
     console.error("Failed to generate units from OpenAI:", e.message);
   }
-
-  // If the first attempt fails or returns generic units, try again with a stronger prompt
+  
   const strongerPrompt = `${basePrompt}\n\nReminder: DO NOT return generic labels like "Unit 1". Provide real descriptive unit titles specific to the course.`;
   try {
     const content = await callOpenAI(strongerPrompt);
@@ -109,8 +86,7 @@ async function getUnitsWithFallback(basePrompt) {
   } catch (e) {
     console.error("Failed to generate units with stronger prompt:", e.message);
   }
-
-  // Final fallback to generic units
+  
   return [
     { label: "Unit 1", value: "Unit 1" },
     { label: "Unit 2", value: "Unit 2" },
@@ -122,6 +98,10 @@ export default async function handler(req, res) {
   const { type } = req.query;
 
   try {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: "Method Not Allowed" });
+    }
+    
     if (type === "units") {
       const { college, course, major } = req.body;
 
@@ -131,8 +111,8 @@ export default async function handler(req, res) {
 
       const courseTrimmed = course.trim();
       const basePrompt = `You are a college professor listing 12 detailed and specific unit names for the course "${courseTrimmed}" offered at ${college} for a ${major} major.
-Provide ONLY a JSON array of objects with "label" and "value" fields for each unit. Do NOT include any text or explanation.
-Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
+      Provide ONLY a JSON array of objects with "label" and "value" fields for each unit. Do NOT include any text or explanation.
+      Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
 
       const units = await getUnitsWithFallback(basePrompt);
       
@@ -148,25 +128,13 @@ Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningfu
 
       const stylesByCategory = {
         technical: [
-          "Code debugging task",
-          "Code writing/building task",
-          "Algorithm optimization",
-          "System architecture analysis",
-          "Output prediction from given code"
+          "Code debugging task", "Code writing/building task", "Algorithm optimization", "System architecture analysis", "Output prediction from given code"
         ],
         analytical: [
-          "Data interpretation",
-          "Scenario-based problem-solving",
-          "Case study analysis",
-          "Process design question",
-          "Multi-step calculation"
+          "Data interpretation", "Scenario-based problem-solving", "Case study analysis", "Process design question", "Multi-step calculation"
         ],
         scientific: [
-          "Experimental design",
-          "Data/graph interpretation",
-          "Diagnosis from observations",
-          "Fieldwork planning",
-          "Calculation-heavy measurement problem"
+          "Experimental design", "Data/graph interpretation", "Diagnosis from observations", "Fieldwork planning", "Calculation-heavy measurement problem"
         ]
       };
 
