@@ -1,4 +1,3 @@
-// api/college.js
 import fetch from "node-fetch";
 
 // Keep the full collegeMajors mapping exactly as in your original code
@@ -90,37 +89,52 @@ export default async function handler(req, res) {
 
       const courseTrimmed = course.trim();
 
-      const basePrompt = `You are a college professor listing 12 detailed and specific unit names for the course "${courseTrimmed}" offered at ${college} for a ${major} major. 
+      const basePrompt = `You are a college professor listing 12 detailed and specific unit names for the course "${courseTrimmed}" offered at ${college} for a ${major} major.
 
 Provide ONLY a JSON array of objects with "label" and "value" fields for each unit. Do NOT include any text or explanation.
 
 Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
 
-      let units;
+      let units = [];
 
-      async function generateUnits(prompt) {
-        const content = await callOpenAI(prompt);
-
-        if (!content) throw new Error("No response content from OpenAI.");
-
-        try {
+      try {
+        const content = await callOpenAI(basePrompt);
+        if (content) {
           const jsonMatch = content.match(/\[.*\]/s);
           if (jsonMatch) {
-            return JSON.parse(jsonMatch[0]);
-          } else {
-            throw new Error("Could not find JSON array in OpenAI response.");
+            units = JSON.parse(jsonMatch[0]);
           }
-        } catch (e) {
-          console.error("JSON parse error:", e.message, content);
-          throw new Error("Failed to parse units JSON.");
         }
+      } catch (e) {
+        console.error("Failed to generate units from OpenAI:", e.message);
+        // Fallback to generic units in case of an error
+        units = [
+          { label: "Unit 1", value: "Unit 1" },
+          { label: "Unit 2", value: "Unit 2" },
+          { label: "Unit 3", value: "Unit 3" }
+        ];
       }
-
-      units = await generateUnits(basePrompt);
-
+      
+      // If the generated units are generic, try again with a stronger prompt
       if (!units || isGenericUnits(units)) {
         const strongerPrompt = `${basePrompt}\n\nReminder: DO NOT return generic labels like "Unit 1". Provide real descriptive unit titles specific to the course.`;
-        units = await generateUnits(strongerPrompt);
+        try {
+          const content = await callOpenAI(strongerPrompt);
+          if (content) {
+            const jsonMatch = content.match(/\[.*\]/s);
+            if (jsonMatch) {
+              units = JSON.parse(jsonMatch[0]);
+            }
+          }
+        } catch (e) {
+          console.error("Failed to generate units with stronger prompt:", e.message);
+          // Fallback to generic units again
+          units = [
+            { label: "Unit 1", value: "Unit 1" },
+            { label: "Unit 2", value: "Unit 2" },
+            { label: "Unit 3", value: "Unit 3" }
+          ];
+        }
       }
 
       if (!units || isGenericUnits(units)) {
