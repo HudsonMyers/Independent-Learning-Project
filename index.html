@@ -120,4 +120,103 @@ document.addEventListener('DOMContentLoaded', ()=>{
             if(!college||!major||!course){
                 document.getElementById('errorMessage').textContent="Please complete all fields to set the course.";
                 document.getElementById('errorMessage').classList.remove('hidden');
-                hide
+                hideAllQuizElements();
+                return;
+            }
+            document.getElementById('errorMessage').classList.add('hidden');
+            const unitDropdownEl = document.getElementById('unitDropdown');
+            unitDropdownEl.innerHTML='<option value="">Loading units...</option>';
+            unitDropdownEl.disabled=true;
+
+            const units = await callServerForUnits({college,major,course});
+            if(units.length>0){
+                unitDropdownEl.innerHTML='<option value="">Select Unit</option>';
+                units.forEach(u=>{ const opt=document.createElement('option'); opt.value=u.value; opt.textContent=u.label; unitDropdownEl.appendChild(opt); });
+                unitDropdownEl.disabled=false;
+                document.getElementById('unitDropdownContainer').classList.remove('hidden');
+                document.getElementById('unitDropdownDiv').classList.remove('hidden');
+                document.getElementById('topicInput').classList.remove('hidden');
+                document.getElementById('difficultySlider').classList.remove('hidden');
+                document.getElementById('generateBtnContainer').classList.remove('hidden');
+                document.getElementById('courseHeader').textContent=`${college} • ${major} • ${course}`;
+                document.getElementById('courseHeader').classList.remove('hidden');
+            } else {
+                document.getElementById('errorMessage').textContent="Failed to load units. Please try again.";
+                document.getElementById('errorMessage').classList.remove('hidden');
+            }
+        } catch(error){
+            console.error(error);
+            document.getElementById('errorMessage').textContent=`Failed to load units. Error: ${error.message}`;
+            document.getElementById('errorMessage').classList.remove('hidden');
+        }
+    });
+
+    document.getElementById('generateBtn').addEventListener('click', async ()=>{
+        try{
+            const college=document.getElementById('collegeDropdown').value;
+            const major=document.getElementById('majorDropdown').value;
+            const course=document.getElementById('courseInput').value.trim();
+            const unit=document.getElementById('unitDropdown').value;
+            const topic=document.getElementById('topicInput').value;
+            const difficulty=parseInt(document.getElementById('difficultySldr').value);
+
+            if(!college||!major||!course||!unit||!topic){
+                document.getElementById('questionText').textContent="Please fill in all fields.";
+                document.getElementById('questionText').classList.remove('hidden');
+                hideAnswerButtons(); hideAnswerTexts(); document.getElementById('feedbackText').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('questionText').textContent="Generating question...";
+            document.getElementById('questionText').classList.remove('hidden');
+            hideAnswerButtons(); hideAnswerTexts(); document.getElementById('feedbackText').classList.add('hidden');
+
+            const quizData = await callServerForQuestion({college,major,course,unit,topic,difficulty});
+            const questionText=quizData.question;
+            const options=quizData.options;
+            const correctIndex=quizData.correctAnswerIndex;
+            const correctLetter=['A','B','C','D'][correctIndex];
+
+            document.getElementById('questionText').textContent=questionText;
+            showAnswerButtons();
+            ['A','B','C','D'].forEach((letter,index)=>{
+                const textEl=document.getElementById(`answerText${letter}`);
+                textEl.textContent=options[index]||'';
+                textEl.classList.remove('hidden');
+            });
+
+            answerOptions={'A':options[0],'B':options[1],'C':options[2],'D':options[3]};
+            correctAnswer=correctLetter;
+            document.getElementById('feedbackText').classList.add('hidden');
+
+        } catch(error){
+            console.error(error);
+            document.getElementById('questionText').textContent=`Failed to generate question. Error: ${error.message}`;
+            document.getElementById('questionText').classList.remove('hidden');
+            hideAnswerButtons(); hideAnswerTexts(); document.getElementById('feedbackText').classList.add('hidden');
+        }
+    });
+
+    ['A','B','C','D'].forEach(letter=>{
+        document.getElementById(`answerBtn${letter}`).addEventListener('click', ()=>{
+            if(!correctAnswer) return;
+            const feedbackEl=document.getElementById('feedbackText');
+            if(letter.toUpperCase()===correctAnswer){
+                feedbackEl.textContent="✅ Correct!";
+                feedbackEl.style.color='#10B981';
+            } else {
+                const correctText=answerOptions[correctAnswer]||'';
+                feedbackEl.textContent=`❌ Incorrect. The correct answer was: ${correctAnswer}. ${correctText}`;
+                feedbackEl.style.color='#EF4444';
+            }
+            feedbackEl.classList.remove('hidden');
+        });
+    });
+
+    document.getElementById('difficultySldr').addEventListener('input', e=>{
+        document.getElementById('difficultyValue').textContent=e.target.value;
+    });
+});
+</script>
+</body>
+</html>
