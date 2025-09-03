@@ -5,395 +5,202 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Independent Learning Project</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      body {
-          font-family: 'Inter', sans-serif;
-      }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="bg-white shadow-xl rounded-lg p-8 w-full max-w-2xl">
+        <h1 class="text-3xl font-bold text-center text-indigo-800 mb-6">Independent Learning Project</h1>
 
-    <div class="bg-white shadow-xl rounded-2xl p-6 md:p-10 w-full max-w-4xl mx-auto my-8">
+        <div class="mb-4">
+            <label for="collegeDropdown" class="block text-sm font-medium text-gray-700">Select College:</label>
+            <select id="collegeDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <option value="">Select College</option>
+            </select>
+        </div>
 
-        <!-- Navigation Buttons -->
-        <nav class="flex justify-center space-x-4 md:space-x-8 mb-6 border-b pb-4">
-            <button id="home-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">Home</button>
-            <button id="about-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">About</button>
-            <button id="contact-button" class="nav-button text-lg font-medium text-gray-800 hover:text-blue-600 focus:outline-none transition-colors duration-300">Contact</button>
-        </nav>
+        <div class="mb-4">
+            <label for="majorDropdown" class="block text-sm font-medium text-gray-700">Select Major:</label>
+            <select id="majorDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" disabled>
+                <option value="">Select Major</option>
+            </select>
+        </div>
 
-        <!-- Home Section -->
-        <section id="home-section" class="website-section">
-            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 text-center">Independent Learning Project</h1>
-            <p class="text-lg md:text-xl text-gray-600 text-center mb-10">
-              A Twist on Education
-            </p>
+        <div class="mb-4">
+            <label for="courseInput" class="block text-sm font-medium text-gray-700">Course Name or Code:</label>
+            <input type="text" id="courseInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., Intro to Psychology">
+        </div>
 
-            <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
+        <div class="flex justify-center mb-6">
+            <button id="setCourse" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out">Set Course</button>
+        </div>
 
-                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square cursor-pointer bg-white hover:bg-blue-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
-                    <h2 class="text-2xl font-bold">Middle School</h2>
-                </div>
+        <p id="errorMessage" class="text-red-500 text-sm text-center mb-4 hidden"></p>
 
-                <div id="high-school-square" data-target="high-school-section" class="interactive-square cursor-pointer bg-purple-500 hover:bg-purple-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
-                    <h2 class="text-2xl font-bold">High School</h2>
-                </div>
-
-                <div id="college-courses-square" data-target="college-courses-section" class="interactive-square cursor-pointer bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
-                    <h2 class="text-2xl font-bold">College Courses</h2>
-                </div>
-            </div>
-        </section>
-
-        <!-- About Section -->
-        <section id="about-section" class="website-section hidden">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">About Me</h2>
-            <p class="text-md text-gray-700 leading-relaxed text-center">
-              My name is Hudson Myers, and I'm a student who is passionate about building things.
-              This website is my personal project to document and showcase the skills I'm learning on my own.
-              I believe that independent learning is a powerful way to grow and innovate, and I'm excited
-              to share what I'm creating with you.
-            </p>
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact-section" class="website-section hidden">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Contact</h2>
-            <p class="text-md text-gray-700 leading-relaxed text-center">
-              If you have any questions or just want to say hello, feel free to reach out to me via email or social media.
-            </p>
-            <div class="mt-6 flex flex-col space-y-3 items-center">
-                <a href="mailto:your.email@example.com" class="text-lg text-blue-600 hover:underline transition-colors duration-300">your.email@example.com</a>
-                <a href="#" class="text-lg text-blue-600 hover:underline transition-colors duration-300">LinkedIn</a>
-                <a href="#" class="text-lg text-blue-600 hover:underline transition-colors duration-300">Twitter</a>
-            </div>
-        </section>
-        
-        <!-- Middle School Section -->
-        <section id="middle-school-section" class="website-section hidden">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Projects</h2>
-            <p class="text-md text-gray-700 leading-relaxed text-center">
-              Click on a subject below to view projects.
-            </p>
-            <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6 mt-8">
-                <div data-target="middle-school-math-section" class="interactive-square cursor-pointer bg-white hover:bg-gray-200 text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
-                    <h3 class="text-2xl font-bold">Math</h3>
-                </div>
-                <div data-target="middle-school-english-section" class="interactive-square cursor-pointer bg-white hover:bg-gray-200 text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
-                    <h3 class="text-2xl font-bold">English</h3>
-                </div>
-                <div data-target="middle-school-science-section" class="interactive-square cursor-pointer bg-white hover:bg-gray-200 text-black rounded-xl shadow-lg p-8 w-64 h-64 flex items-center justify-center text-center transition-transform transform hover:scale-105">
-                    <h3 class="text-2xl font-bold">Science</h3>
-                </div>
-            </div>
-        </section>
-
-        <!-- High School Section -->
-        <section id="high-school-section" class="website-section hidden">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">High School Projects</h2>
-            <p class="text-md text-gray-700 leading-relaxed text-center">
-              This is the page for your high school content. You can add text, images, or links to your projects here.
-            </p>
-        </section>
-
-        <!-- College Courses Section -->
-        <section id="college-courses-section" class="website-section hidden">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">College Courses</h2>
-            <p class="text-md text-gray-700 leading-relaxed text-center mb-8">
-                Generate a quiz question for your college-level courses!
-            </p>
+        <div id="quizSection" class="border-t pt-6 mt-6 border-gray-200">
+            <h2 id="courseHeader" class="text-xl font-semibold text-center text-gray-800 mb-4 hidden"></h2>
             
-            <p class="text-sm text-gray-400 text-center mb-4">Your User ID: <span id="userIdDisplay"></span></p>
-
-            <div class="space-y-6">
-                <!-- Course Setup Inputs -->
-                <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4">
-                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                        <select id="collegeDropdown" class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors" disabled>
-                            <option value="">Select College</option>
-                        </select>
-                        <select id="majorDropdown" class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors" disabled>
-                            <option value="">Select Major</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 items-center">
-                        <input type="text" id="courseInput" placeholder="Course Name (e.g., Intro to Psychology)" class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors" />
-                        <button id="setCourse" class="w-full md:w-auto px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors">Set Course</button>
-                    </div>
-                    <p id="errorMessage" class="text-red-500 text-sm mt-2 hidden"></p>
-                </div>
-
-                <!-- Quiz Generation Inputs -->
-                <div class="bg-gray-50 p-6 rounded-xl shadow-inner space-y-4 hidden" id="quiz-inputs-section">
-                    <h3 id="courseHeader" class="text-xl font-bold text-center mb-4 hidden"></h3>
-                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                        <select id="unitDropdown" class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors" disabled>
-                            <option value="">Select Unit</option>
-                        </select>
-                        <input type="text" id="topicInput" placeholder="Topic (e.g., Cellular Respiration)" class="flex-1 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors" />
-                    </div>
-                    <div>
-                        <label for="difficultySldr" class="block text-gray-700 font-medium mb-2">Difficulty: <span id="difficultyValue">5</span></label>
-                        <input type="range" id="difficultySldr" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
-                    </div>
-                    <button id="generateBtn" class="w-full px-6 py-3 bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors">Generate Question</button>
-                    <button id="backToCourses" class="w-full px-6 py-3 bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition-colors hidden">Back to Courses</button>
-                </div>
-                
-                <!-- Quiz Display Section -->
-                <div class="bg-white p-6 rounded-xl shadow-lg mt-8 space-y-4 hidden" id="quiz-display-section">
-                    <p id="questionText" class="text-lg font-semibold text-gray-800 hidden">Question text will appear here.</p>
-                    <div class="space-y-2">
-                        <button id="answerBtnA" class="w-full text-left p-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors hidden"><span class="font-bold mr-2">A.</span><span id="answerTextA"></span></button>
-                        <button id="answerBtnB" class="w-full text-left p-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors hidden"><span class="font-bold mr-2">B.</span><span id="answerTextB"></span></button>
-                        <button id="answerBtnC" class="w-full text-left p-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors hidden"><span class="font-bold mr-2">C.</span><span id="answerTextC"></span></button>
-                        <button id="answerBtnD" class="w-full text-left p-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors hidden"><span class="font-bold mr-2">D.</span><span id="answerTextD"></span></button>
-                    </div>
-                    <p id="feedbackText" class="mt-4 text-center font-bold"></p>
-                </div>
+            <div class="mb-4 hidden" id="unitDropdown">
+                <label for="unitDropdown" class="block text-sm font-medium text-gray-700">Select Unit:</label>
+                <select id="unitDropdown" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></select>
             </div>
-        </section>
+            
+            <div class="mb-4 hidden" id="topicInput">
+                <label for="topicInput" class="block text-sm font-medium text-gray-700">Specific Topic:</label>
+                <input type="text" id="topicInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="e.g., Cognitive Dissonance">
+            </div>
 
-        <!-- Other sections (Math, English, Science) -->
-        <section id="middle-school-math-section" class="website-section hidden">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Math Projects</h2>
-            <p class="text-md text-gray-700 leading-relaxed text-center">
-              This is the page for your middle school math projects.
-            </p>
-        </section>
+            <div class="mb-6 hidden" id="difficultySlider">
+                <label for="difficultySldr" class="block text-sm font-medium text-gray-700">Difficulty: <span id="difficultyValue">5</span></label>
+                <input type="range" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" id="difficultySldr">
+            </div>
+            
+            <div class="flex justify-center hidden" id="generateBtnContainer">
+                <button id="generateBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out">Generate Question</button>
+            </div>
 
-        <section id="middle-school-english-section" class="website-section hidden">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School English Projects</h2>
-            <p class="text-md text-gray-700 leading-relaxed text-center">
-              This is the page for your middle school English projects.
-            </p>
-        </section>
+            <div id="quizContent" class="mt-6">
+                <p id="questionText" class="text-lg font-medium text-gray-900 mb-4 hidden"></p>
+                
+                <div id="answerButtons" class="space-y-4">
+                    <button id="answerBtnA" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
+                        <span id="answerTextA" class="font-medium text-left block hidden"></span>
+                    </button>
+                    <button id="answerBtnB" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
+                        <span id="answerTextB" class="font-medium text-left block hidden"></span>
+                    </button>
+                    <button id="answerBtnC" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
+                        <span id="answerTextC" class="font-medium text-left block hidden"></span>
+                    </button>
+                    <button id="answerBtnD" class="answer-btn w-full px-4 py-3 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition duration-300 ease-in-out">
+                        <span id="answerTextD" class="font-medium text-left block hidden"></span>
+                    </button>
+                </div>
 
-        <section id="middle-school-science-section" class="website-section hidden">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">Middle School Science Projects</h2>
-            <p class="text-md text-gray-700 leading-relaxed text-center">
-              This is the page for your middle school science projects.
-            </p>
-        </section>
+                <p id="feedbackText" class="mt-4 text-center font-bold text-xl hidden"></p>
+            </div>
+        </div>
     </div>
 
-    <script type="module">
+    <script>
         let correctAnswer = '';
         let answerOptions = {};
 
         const collegeMajors = {
-            "Coastal Carolina University": [
-                "Marine Science",
-                "Business Administration",
-                "Computer Science",
-                "Exercise and Sport Science",
-                "Physical Education"
-            ],
-            "North Carolina State University": [
-                "Engineering",
-                "Computer Science",
-                "Agricultural Sciences",
-                "Supply Chain Management and Logistics",
-                "Textile Engineering"
-            ],
-            "University of Alabama": [
-                "Political Science",
-                "Nursing",
-                "Business",
-                "Management Information Systems",
-                "Psychology"
-            ],
-            "Wake Technical Community College": [
-                "Liberal Arts",
-                "Information Technology",
-                "Business",
-                "Registered Nursing",
-                "Construction",
-                "GM ASEP"
-            ],
-            "Georgia Institute of Technology": [
-                "Aerospace Engineering",
-                "Computer Science",
-                "Industrial Design",
-                "Biomedical Engineering"
-            ]
+          "Coastal Carolina University": ["Marine Science", "Business Administration", "Computer Science", "Exercise and Sport Science", "Physical Education"],
+          "North Carolina State University": ["Engineering", "Computer Science", "Agricultural Sciences", "Supply Chain Management and Logistics", "Textile Engineering"],
+          "University of Alabama": ["Political Science", "Nursing", "Business", "Management Information Systems", "Psychology"],
+          "Wake Technical Community College": ["Liberal Arts", "Information Technology", "Business", "Registered Nursing", "Construction", "GM ASEP"],
+          "Georgia Institute of Technology": ["Aerospace Engineering", "Computer Science", "Industrial Design", "Biomedical Engineering"]
         };
-        
-        function timeout(ms) {
-            return new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), ms));
+
+        function hideAllQuizElements() {
+            document.getElementById('unitDropdown').classList.add('hidden');
+            document.getElementById('topicInput').classList.add('hidden');
+            document.getElementById('generateBtnContainer').classList.add('hidden');
+            document.getElementById('difficultySlider').classList.add('hidden');
+            document.getElementById('questionText').classList.add('hidden');
+            document.getElementById('courseHeader').classList.add('hidden');
+            hideAnswerButtons();
+            hideAnswerTexts();
+            document.getElementById('feedbackText').classList.add('hidden');
+        }
+
+        function hideAnswerButtons() {
+            ['A', 'B', 'C', 'D'].forEach(letter => document.getElementById(`answerBtn${letter}`).classList.add('hidden'));
+        }
+
+        function showAnswerButtons() {
+            ['A', 'B', 'C', 'D'].forEach(letter => document.getElementById(`answerBtn${letter}`).classList.remove('hidden'));
+        }
+
+        function hideAnswerTexts() {
+            ['A', 'B', 'C', 'D'].forEach(letter => document.getElementById(`answerText${letter}`).classList.add('hidden'));
+        }
+
+        function populateCollegeDropdown() {
+            const collegeDropdown = document.getElementById('collegeDropdown');
+            collegeDropdown.innerHTML = '<option value="">Select College</option>';
+            Object.keys(collegeMajors).forEach(college => {
+                const opt = document.createElement('option');
+                opt.value = college;
+                opt.textContent = college;
+                collegeDropdown.appendChild(opt);
+            });
+            collegeDropdown.disabled = false;
+        }
+
+        function populateMajorDropdown(collegeName) {
+            const majorDropdown = document.getElementById('majorDropdown');
+            majorDropdown.innerHTML = '<option value="">Select Major</option>';
+            const majors = collegeMajors[collegeName] || [];
+            majors.forEach(major => {
+                const opt = document.createElement('option');
+                opt.value = major;
+                opt.textContent = major;
+                majorDropdown.appendChild(opt);
+            });
+            majorDropdown.disabled = false;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // General UI elements and state
-            const navButtons = document.querySelectorAll('nav .nav-button');
-            const interactiveSquares = document.querySelectorAll('.interactive-square');
-            const sections = document.querySelectorAll('.website-section');
-            
-            // Quiz-related DOM elements
-            const collegeDropdown = document.getElementById('collegeDropdown');
-            const majorDropdown = document.getElementById('majorDropdown');
-            const courseInput = document.getElementById('courseInput');
-            const setCourseBtn = document.getElementById('setCourse');
-            const errorMessage = document.getElementById('errorMessage');
-            const quizInputsSection = document.getElementById('quiz-inputs-section');
-            const unitDropdown = document.getElementById('unitDropdown');
-            const topicInput = document.getElementById('topicInput');
-            const difficultySldr = document.getElementById('difficultySldr');
-            const difficultyValue = document.getElementById('difficultyValue');
-            const generateBtn = document.getElementById('generateBtn');
-            const quizDisplaySection = document.getElementById('quiz-display-section');
-            const courseHeader = document.getElementById('courseHeader');
-            const questionText = document.getElementById('questionText');
-            const feedbackText = document.getElementById('feedbackText');
-            const backToCoursesBtn = document.getElementById('backToCourses');
-            const userIdDisplay = document.getElementById('userIdDisplay');
-            
-            // Answer buttons and text
-            const answerBtnA = document.getElementById('answerBtnA');
-            const answerBtnB = document.getElementById('answerBtnB');
-            const answerBtnC = document.getElementById('answerBtnC');
-            const answerBtnD = document.getElementById('answerBtnD');
-            const answerTextA = document.getElementById('answerTextA');
-            const answerTextB = document.getElementById('answerTextB');
-            const answerTextC = document.getElementById('answerTextC');
-            const answerTextD = document.getElementById('answerTextD');
-            
-            // UI helper functions
-            function hideAllQuizElements() {
-              quizInputsSection.classList.add('hidden');
-              quizDisplaySection.classList.add('hidden');
-              errorMessage.classList.add('hidden');
-            }
-            
-            function hideAnswerButtons() {
-              answerBtnA.classList.add('hidden');
-              answerBtnB.classList.add('hidden');
-              answerBtnC.classList.add('hidden');
-              answerBtnD.classList.add('hidden');
-            }
-            
-            function showAnswerButtons() {
-              answerBtnA.classList.remove('hidden');
-              answerBtnB.classList.remove('hidden');
-              answerBtnC.classList.remove('hidden');
-              answerBtnD.classList.remove('hidden');
-            }
+            populateCollegeDropdown();
+            hideAllQuizElements();
 
-            function hideAnswerTexts() {
-              answerTextA.textContent = '';
-              answerTextB.textContent = '';
-              answerTextC.textContent = '';
-              answerTextD.textContent = '';
-            }
-
-            const showSection = (sectionId) => {
-                sections.forEach(section => section.classList.add('hidden'));
-                const targetSection = document.getElementById(sectionId);
-                if (targetSection) {
-                    targetSection.classList.remove('hidden');
+            document.getElementById('collegeDropdown').addEventListener('change', () => {
+                const selectedCollege = document.getElementById('collegeDropdown').value;
+                if (selectedCollege) populateMajorDropdown(selectedCollege);
+                else {
+                    document.getElementById('majorDropdown').innerHTML = '<option value="">Select Major</option>';
+                    document.getElementById('majorDropdown').disabled = true;
                 }
-            };
-
-            const populateCollegeDropdown = () => {
-                const colleges = Object.keys(collegeMajors);
-                collegeDropdown.innerHTML = '<option value="">Select College</option>';
-                colleges.forEach(college => {
-                    const opt = document.createElement('option');
-                    opt.value = college;
-                    opt.textContent = college;
-                    collegeDropdown.appendChild(opt);
-                });
-                collegeDropdown.disabled = false;
-            };
-
-            const populateMajorDropdown = (collegeName) => {
-                const majors = collegeMajors[collegeName] || [];
-                majorDropdown.innerHTML = '<option value="">Select Major</option>';
-                majors.forEach(major => {
-                    const opt = document.createElement('option');
-                    opt.value = major;
-                    opt.textContent = major;
-                    majorDropdown.appendChild(opt);
-                });
-                majorDropdown.disabled = false;
-            };
-            
-            // Main Event Listeners
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const targetSectionId = button.id.replace('-button', '-section');
-                    showSection(targetSectionId);
-                });
-            });
-
-            interactiveSquares.forEach(square => {
-                square.addEventListener('click', () => {
-                    const targetSectionId = square.getAttribute('data-target');
-                    showSection(targetSectionId);
-                });
-            });
-
-            collegeDropdown.addEventListener('change', () => {
-                const selectedCollege = collegeDropdown.value;
-                if (selectedCollege) {
-                    populateMajorDropdown(selectedCollege);
-                } else {
-                    majorDropdown.innerHTML = '<option value="">Select Major</option>';
-                    majorDropdown.disabled = true;
-                }
-                majorDropdown.value = "";
-                courseInput.value = "";
+                document.getElementById('majorDropdown').value = '';
+                document.getElementById('courseInput').value = '';
                 hideAllQuizElements();
             });
-            
-            backToCoursesBtn.addEventListener('click', () => {
-                hideAllQuizElements();
-                showSection('college-courses-section');
-                collegeDropdown.value = '';
-                majorDropdown.innerHTML = '<option value="">Select Major</option>';
-                majorDropdown.disabled = true;
-                courseInput.value = '';
-                courseHeader.classList.add('hidden');
-                // The following lines were not in the original code but are needed to reset the UI
-                questionText.textContent = "Question text will appear here.";
-                feedbackText.textContent = "";
-                hideAnswerButtons();
-                hideAnswerTexts();
-                questionText.classList.add('hidden');
-                quizDisplaySection.classList.add('hidden');
-            });
 
-            setCourseBtn.addEventListener('click', async () => {
-                const college = collegeDropdown.value;
-                const major = majorDropdown.value;
-                const course = courseInput.value.trim();
-
-                if (!college || !major || !course) {
-                    errorMessage.textContent = "Please complete all fields to set the course.";
-                    errorMessage.classList.remove('hidden');
-                    return;
-                }
-
-                errorMessage.classList.add('hidden');
-                quizInputsSection.classList.remove('hidden');
-                unitDropdown.innerHTML = '<option value="">Loading units...</option>';
-                unitDropdown.disabled = true;
-
-                courseHeader.textContent = `${college} • ${major} • ${course}`;
-                courseHeader.classList.remove('hidden');
-                backToCoursesBtn.classList.remove('hidden');
-
+            document.getElementById('setCourse').addEventListener('click', async () => {
                 try {
+                    const college = document.getElementById('collegeDropdown').value;
+                    const major = document.getElementById('majorDropdown').value;
+                    const course = document.getElementById('courseInput').value.trim();
+
+                    if (!college || !major || !course) {
+                        document.getElementById('errorMessage').textContent = "Please complete all fields to set the course.";
+                        document.getElementById('errorMessage').classList.remove('hidden');
+                        hideAllQuizElements();
+                        return;
+                    }
+
+                    document.getElementById('errorMessage').classList.add('hidden');
+                    const unitDropdown = document.getElementById('unitDropdown');
+                    unitDropdown.innerHTML = '<option value="">Loading units...</option>';
+                    unitDropdown.disabled = true;
+
                     const response = await fetch('/api/college?type=units', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({college, course, major})
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ college, major, course })
                     });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`API error: ${response.status} - ${errorText}`);
+                    }
+                    
                     const data = await response.json();
-                    const units = data.units || [];
+                    const units = data.units;
 
                     if (units.length > 0) {
-                        unitDropdown.innerHTML = '';
+                        unitDropdown.innerHTML = '<option value="">Select Unit</option>';
                         units.forEach(unit => {
                             const opt = document.createElement('option');
                             opt.value = unit.value;
@@ -401,57 +208,61 @@
                             unitDropdown.appendChild(opt);
                         });
                         unitDropdown.disabled = false;
+                        unitDropdown.classList.remove('hidden');
+                        document.getElementById('topicInput').classList.remove('hidden');
+                        document.getElementById('difficultySlider').classList.remove('hidden');
+                        document.getElementById('generateBtnContainer').classList.remove('hidden');
+                        document.getElementById('courseHeader').textContent = `${college} • ${major} • ${course}`;
+                        document.getElementById('courseHeader').classList.remove('hidden');
+                    } else {
+                        document.getElementById('errorMessage').textContent = "Failed to load units. Please try again.";
+                        document.getElementById('errorMessage').classList.remove('hidden');
                     }
                 } catch (error) {
                     console.error("Error setting course:", error);
-                    errorMessage.textContent = "Failed to load units. Please try again.";
-                    errorMessage.classList.remove('hidden');
-                    unitDropdown.disabled = true;
-                    unitDropdown.innerHTML = '<option value="">Failed to load units</option>';
+                    document.getElementById('errorMessage').textContent = `Failed to load units. Error: ${error.message}`;
+                    document.getElementById('errorMessage').classList.remove('hidden');
                 }
             });
 
-            difficultySldr.addEventListener('input', () => {
-                difficultyValue.textContent = difficultySldr.value;
-            });
-            
-            generateBtn.addEventListener('click', async () => {
+            document.getElementById('generateBtn').addEventListener('click', async () => {
                 try {
-                    const college = collegeDropdown.value;
-                    const major = majorDropdown.value;
-                    const course = courseInput.value.trim();
-                    const unit = unitDropdown.value;
-                    const topic = topicInput.value;
-                    const difficulty = parseInt(difficultySldr.value);
+                    const college = document.getElementById('collegeDropdown').value;
+                    const major = document.getElementById('majorDropdown').value;
+                    const course = document.getElementById('courseInput').value.trim();
+                    const unit = document.getElementById('unitDropdown').value;
+                    const topic = document.getElementById('topicInput').value;
+                    const difficulty = parseInt(document.getElementById('difficultySldr').value);
 
                     if (!college || !major || !course || !unit || !topic) {
-                        questionText.textContent = "Please fill in all fields.";
-                        questionText.classList.remove('hidden');
+                        document.getElementById('questionText').textContent = "Please fill in all fields.";
+                        document.getElementById('questionText').classList.remove('hidden');
                         hideAnswerButtons();
                         hideAnswerTexts();
-                        feedbackText.classList.add('hidden');
+                        document.getElementById('feedbackText').classList.add('hidden');
                         return;
                     }
 
-                    questionText.textContent = "Generating question...";
-                    questionText.classList.remove('hidden');
-                    quizDisplaySection.classList.remove('hidden');
+                    document.getElementById('questionText').textContent = "Generating question...";
+                    document.getElementById('questionText').classList.remove('hidden');
                     hideAnswerButtons();
                     hideAnswerTexts();
-                    feedbackText.classList.add('hidden');
-                    generateBtn.disabled = true;
-                    generateBtn.textContent = 'Generating...';
+                    document.getElementById('feedbackText').classList.add('hidden');
 
-                    const result = await Promise.race([
-                        fetch('/api/college?type=quiz', {
-                            method: 'POST',
-                            headers: {'Content-Type': 'application/json'},
-                            body: JSON.stringify({college, major, course, unit, topic, difficulty})
-                        }).then(r => r.json()),
-                        timeout(15000)
-                    ]);
+                    const response = await fetch('/api/college?type=quiz', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ college, major, course, unit, topic, difficulty })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`API error: ${response.status} - ${errorText}`);
+                    }
 
-                    const content = result.question || '';
+                    const data = await response.json();
+                    const content = data.question;
+
                     const correctIndex = content.indexOf("Correct Answer:");
                     if (correctIndex === -1) throw new Error("Invalid response format: 'Correct Answer:' not found.");
 
@@ -465,7 +276,7 @@
                     if (questionIndex === -1 || optionAIndex === -1) throw new Error("Invalid response format: Question or options not found.");
 
                     const questionLines = lines.slice(questionIndex, optionAIndex);
-                    const questionTextContent = questionLines.join('\n').replace(/^(Question|Q)\.\s*/i, '').trim();
+                    const questionText = questionLines.join('\n').replace(/^(Question|Q)\.\s*/i, '').trim();
                     const optionsText = lines.slice(optionAIndex).join('\n');
 
                     answerOptions = {};
@@ -480,48 +291,47 @@
 
                     correctAnswer = rawCorrectAnswer.toUpperCase().match(/[A-D]/)[0];
 
-                    questionText.textContent = questionTextContent;
-                    questionText.classList.remove('hidden');
+                    document.getElementById('questionText').textContent = questionText;
+                    document.getElementById('questionText').classList.remove('hidden');
                     showAnswerButtons();
 
-                    ['A','B','C','D'].forEach(letter => {
+                    ['A', 'B', 'C', 'D'].forEach(letter => {
                         const textEl = document.getElementById(`answerText${letter}`);
                         textEl.textContent = answerOptions[letter] || '';
                         textEl.classList.remove('hidden');
                     });
-                    
+
+                    document.getElementById('feedbackText').classList.add('hidden');
+
                 } catch (error) {
                     console.error("Generation error:", error);
-                    questionText.textContent = error.message === "Timeout"
-                        ? "Request timed out. Please try again."
-                        : `Failed to generate question. Error: ${error.message}`;
-                    questionText.classList.remove('hidden');
+                    document.getElementById('questionText').textContent = `Failed to generate question. Error: ${error.message}`;
+                    document.getElementById('questionText').classList.remove('hidden');
                     hideAnswerButtons();
                     hideAnswerTexts();
-                    feedbackText.classList.add('hidden');
-                } finally {
-                    generateBtn.disabled = false;
-                    generateBtn.textContent = 'Generate Question';
+                    document.getElementById('feedbackText').classList.add('hidden');
                 }
             });
 
-            ['A','B','C','D'].forEach(letter => {
+            ['A', 'B', 'C', 'D'].forEach(letter => {
                 document.getElementById(`answerBtn${letter}`).addEventListener('click', () => {
                     if (!correctAnswer) return;
                     const feedbackEl = document.getElementById('feedbackText');
                     if (letter.toUpperCase() === correctAnswer) {
                         feedbackEl.textContent = "✅ Correct!";
+                        feedbackEl.style.color = '#10B981';
                     } else {
                         const correctText = answerOptions[correctAnswer] || '';
                         feedbackEl.textContent = `❌ Incorrect. The correct answer was: ${correctAnswer}. ${correctText}`;
+                        feedbackEl.style.color = '#EF4444';
                     }
                     feedbackEl.classList.remove('hidden');
                 });
             });
 
-            // Initial setup
-            populateCollegeDropdown();
-            showSection('home-section');
+            document.getElementById('difficultySldr').addEventListener('input', (event) => {
+                document.getElementById('difficultyValue').textContent = event.target.value;
+            });
         });
     </script>
 </body>
