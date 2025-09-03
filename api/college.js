@@ -1,200 +1,141 @@
-import fetch from "node-fetch";
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
 
-// Note: In a real-world application, this API key should be stored in an environment variable, not hardcoded.
-const OPENAI_API_KEY = "sk-proj-761h8f7J9Yj3e4E8w7jT2z0h1d7G7C9F9l6c4O7B3n6M3j7P";
+// Load environment variables from .env file
+dotenv.config();
 
-const collegeMajors = {
-  "Coastal Carolina University": [
-    "Marine Science", "Business Administration", "Computer Science", "Exercise and Sport Science", "Physical Education"
-  ],
-  "North Carolina State University": [
-    "Engineering", "Computer Science", "Agricultural Sciences", "Supply Chain Management and Logistics", "Textile Engineering"
-  ],
-  "University of Alabama": [
-    "Political Science", "Nursing", "Business", "Management Information Systems", "Psychology"
-  ],
-  "Wake Technical Community College": [
-    "Liberal Arts", "Information Technology", "Business", "Registered Nursing", "Construction", "GM ASEP"
-  ],
-  "Georgia Institute of Technology": [
-    "Aerospace Engineering", "Computer Science", "Industrial Design", "Biomedical Engineering"
-  ]
-};
+const app = express();
+const port = 3000;
 
-function isGenericUnits(units) {
-  if (!Array.isArray(units)) return true;
-  if (units.length < 2) return true;
-  const genericLabels = new Set(["Unit 1", "Unit 2", "Unit 3"]);
-  return units.every(u => genericLabels.has(u.label) && u.label === u.value);
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public')); // Serve the index.html from a 'public' directory
+
+const API_KEY = process.env.API_KEY;
+
+// Check if API key is set
+if (!API_KEY) {
+    console.error("Error: API_KEY is not set. Please add it to your .env file.");
+    process.exit(1);
 }
 
-async function callOpenAI(prompt) {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${OPENAI_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: "You are an expert college professor who ONLY provides a JSON array of specific, non-generic unit titles." },
-        { role: "user", content: prompt }
-      ],
-      temperature: 0.7,
-      max_tokens: 1000
-    })
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
-  }
-
-  const data = await response.json();
-  return data.choices?.[0]?.message?.content;
-}
-
-async function getUnitsWithFallback(basePrompt) {
-  try {
-    const content = await callOpenAI(basePrompt);
-    if (content) {
-      const jsonMatch = content.match(/\[.*\]/s);
-      if (jsonMatch) {
-        const units = JSON.parse(jsonMatch[0]);
-        if (!isGenericUnits(units)) {
-          return units;
+// Function to call the Gemini API
+async function callGeminiApi(prompt, responseSchema) {
+    const payload = {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: responseSchema
         }
-      }
-    }
-  } catch (e) {
-    console.error("Failed to generate units from OpenAI:", e.message);
-  }
-  
-  const strongerPrompt = `${basePrompt}\n\nReminder: DO NOT return generic labels like "Unit 1". Provide real descriptive unit titles specific to the course.`;
-  try {
-    const content = await callOpenAI(strongerPrompt);
-    if (content) {
-      const jsonMatch = content.match(/\[.*\]/s);
-      if (jsonMatch) {
-        const units = JSON.parse(jsonMatch[0]);
-        if (!isGenericUnits(units)) {
-          return units;
-        }
-      }
-    }
-  } catch (e) {
-    console.error("Failed to generate units with stronger prompt:", e.message);
-  }
-  
-  return [
-    { label: "Unit 1", value: "Unit 1" },
-    { label: "Unit 2", value: "Unit 2" },
-    { label: "Unit 3", value: "Unit 3" }
-  ];
-}
-
-export default async function handler(req, res) {
-  const { type } = req.query;
-
-  try {
-    if (req.method !== 'POST') {
-      return res.status(405).json({ error: "Method Not Allowed" });
-    }
+    };
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
     
-    if (type === "units") {
-      const { college, course, major } = req.body;
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
 
-      if (!collegeMajors[college] || !major || !course) {
-        return res.status(400).json({ error: "Invalid input" });
-      }
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status} - ${await response.text()}`);
+        }
 
-      const courseTrimmed = course.trim();
-      const basePrompt = `You are a college professor listing 12 detailed and specific unit names for the course "${courseTrimmed}" offered at ${college} for a ${major} major.
-      Provide ONLY a JSON array of objects with "label" and "value" fields for each unit. Do NOT include any text or explanation.
-      Avoid generic unit labels like "Unit 1", "Unit 2", etc. Provide actual meaningful titles.`;
-
-      const units = await getUnitsWithFallback(basePrompt);
-      
-      return res.status(200).json({ units });
+        const result = await response.json();
+        const jsonPart = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!jsonPart) {
+            throw new Error("Invalid response format from API");
+        }
+        return JSON.parse(jsonPart);
+    } catch (error) {
+        console.error("Gemini API call failed:", error);
+        throw error;
     }
-
-    else if (type === "quiz") {
-      const { college, major, course, unit, topic, difficulty } = req.body;
-
-      if (!collegeMajors[college] || !collegeMajors[college].includes(major)) {
-        return res.status(400).json({ error: "Invalid college or major selected." });
-      }
-
-      const stylesByCategory = {
-        technical: [
-          "Code debugging task", "Code writing/building task", "Algorithm optimization", "System architecture analysis", "Output prediction from given code"
-        ],
-        analytical: [
-          "Data interpretation", "Scenario-based problem-solving", "Case study analysis", "Process design question", "Multi-step calculation"
-        ],
-        scientific: [
-          "Experimental design", "Data/graph interpretation", "Diagnosis from observations", "Fieldwork planning", "Calculation-heavy measurement problem"
-        ]
-      };
-
-      let category;
-      if (["Computer Science", "Information Technology", "Management Information Systems", "Engineering", "Supply Chain Management and Logistics", "Textile Engineering"].includes(major)) {
-        category = "technical";
-      } else if (["Business Administration", "Business", "Political Science", "Industrial Design"].includes(major)) {
-        category = "analytical";
-      } else {
-        category = "scientific";
-      }
-
-      const styleOptions = stylesByCategory[category];
-      const randomStyle = styleOptions[Math.floor(Math.random() * styleOptions.length)];
-
-      let difficultyDescription;
-      if (difficulty >= 1 && difficulty <= 3) difficultyDescription = "easy, base-level";
-      else if (difficulty >= 4 && difficulty <= 7) difficultyDescription = "standard, course-appropriate";
-      else if (difficulty >= 8 && difficulty <= 10) difficultyDescription = "extremely difficult, complex, or multi-step";
-      else difficultyDescription = "standard, course-appropriate";
-
-      const prompt = `You are a college professor designing a rigorous, course-appropriate multiple-choice quiz question.
-      
-Generate an **${difficultyDescription}** question in the style of a **${randomStyle.toLowerCase()}**.
-  
-Major: ${major}
-Course: ${course}
-Unit: ${unit}
-Topic: ${topic}
-  
-Create ONE multiple-choice question that:
-- **Bases the entire question's scenario on a verifiable, interesting fact about the chosen ${topic}.**
-- **Does NOT explicitly state "Fun fact:"**. Instead, the fact must be woven seamlessly into the problem statement.
-- question output format should vary depending on ${stylesByCategory} and ${difficulty} offering word problems, code block debugging/correcting, math problems, etc. 
-- Requires the student to apply concepts from the ${course} and ${unit} to solve a problem related to that fact.
-- Matches the academic depth of an actual quiz, test, or homework question in a ${course} course at ${college}.
-- Is specific to the major and reflects the skills actually assessed in the unit "${unit}".
-- Avoids generic definitions; instead, focus on real techniques, methods, problem-solving, or analysis.
-- Uses real academic language and structure used in college assessments.
-- Provides 4 answer choices labeled A–D, with one correct and clearly defensible answer.
-- Does NOT assume knowledge outside of what’s commonly taught in the selected unit/topic.
-- If the topic is repeated, use a different fact for the new question.
-  
-Return ONLY in this format:
-Question: [Your question here]
-A. [Option A]
-B. [Option B]
-C. [Option C]
-D. [Option D]
-Correct Answer: [A/B/C/D]`;
-
-      const questionContent = await callOpenAI(prompt);
-      res.status(200).json({ question: questionContent });
-    }
-
-    else {
-      res.status(400).json({ error: "Invalid type" });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
-  }
 }
+
+// Endpoint to generate unit names
+app.post('/generate-units', async (req, res) => {
+    try {
+        const { college, major, course } = req.body;
+        const prompt = `Generate 10 detailed and specific unit names for the course "${course}" offered at ${college} for a ${major} major.
+                         Return only a JSON array of objects with "label" and "value" fields.`;
+        
+        const unitsSchema = {
+            type: "ARRAY",
+            items: {
+                type: "OBJECT",
+                properties: {
+                    label: { "type": "STRING" },
+                    value: { "type": "STRING" }
+                },
+                required: ["label", "value"]
+            }
+        };
+
+        const units = await callGeminiApi(prompt, unitsSchema);
+        res.json(units);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+});
+
+// Endpoint to generate a quiz question
+app.post('/generate-question', async (req, res) => {
+    try {
+        const { college, major, course, unit, topic, difficulty } = req.body;
+
+        const stylesByCategory = {
+          technical: [ "Code debugging", "Code writing", "Algorithm optimization", "System architecture analysis", "Output prediction" ],
+          analytical: [ "Data interpretation", "Scenario-based problem-solving", "Case study analysis", "Process design", "Multi-step calculation" ],
+          scientific: [ "Experimental design", "Data/graph interpretation", "Diagnosis from observations", "Fieldwork planning", "Calculation-heavy measurement problem" ]
+        };
+
+        let category;
+        if (["Computer Science", "Information Technology", "Management Information Systems", "Engineering", "Supply Chain Management and Logistics", "Textile Engineering"].includes(major)) {
+          category = "technical";
+        } else if (["Business Administration", "Business", "Political Science", "Industrial Design"].includes(major)) {
+          category = "analytical";
+        } else {
+          category = "scientific";
+        }
+
+        const styleOptions = stylesByCategory[category];
+        const randomStyle = styleOptions[Math.floor(Math.random() * styleOptions.length)];
+
+        let difficultyDescription;
+        if (difficulty >= 1 && difficulty <= 3) difficultyDescription = "easy, base-level";
+        else if (difficulty >= 4 && difficulty <= 7) difficultyDescription = "standard, course-appropriate";
+        else if (difficulty >= 8 && difficulty <= 10) difficultyDescription = "extremely difficult, complex, or multi-step";
+        else difficultyDescription = "standard, course-appropriate";
+
+        const prompt = `Generate an **${difficultyDescription}** question in the style of a **${randomStyle.toLowerCase()}**. Major: ${major}, Course: ${course}, Unit: ${unit}, Topic: ${topic}.
+        The question should be based on a verifiable fact about the topic, woven seamlessly into the problem statement.
+        The question must require applying concepts from the course.
+        Provide 4 answer choices.
+        Return ONLY a JSON object with 'question' (string), 'options' (array of 4 strings), and 'correctAnswerIndex' (a number from 0-3).`;
+        
+        const questionSchema = {
+            type: "OBJECT",
+            properties: {
+                question: { "type": "STRING" },
+                options: {
+                    type: "ARRAY",
+                    items: { "type": "STRING" }
+                },
+                correctAnswerIndex: { "type": "NUMBER" }
+            },
+            required: ["question", "options", "correctAnswerIndex"]
+        };
+
+        const quizData = await callGeminiApi(prompt, questionSchema);
+        res.json(quizData);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
+    console.log("Press Ctrl+C to stop the server.");
+});
