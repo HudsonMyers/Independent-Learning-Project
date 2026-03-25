@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Independent Learning Project</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-lime-50 min-h-screen flex flex-col items-center justify-center p-4 font-serif">
+
+  <nav class="fixed top-4 w-full flex justify-center z-50 space-x-12">
+    <button id="home-button" class="nav-button text-lg font-bold text-gray-900 hover:text-blue-600">Home</button>
+    <button id="about-button" class="nav-button text-lg font-bold text-gray-900 hover:text-blue-600">About</button>
+    <button id="contact-button" class="nav-button text-lg font-bold text-gray-900 hover:text-blue-600">Contact</button>
+    <button id="premium-button" class="nav-button text-lg font-bold text-gray-900 hover:text-yellow-600">Premium</button>
+  </nav>
+
+  <div class="bg-lime-100 shadow-xl rounded-2xl p-6 md:p-10 w-full max-w-lg mx-auto my-8 mt-24">
+    
+    <div class="mb-4">
+      <button id="back-button" class="text-black hover:text-gray-600 font-semibold transition-colors duration-300">
+        &larr; Back
+      </button>
+    </div>
+    
+    <div class="text-center mb-8">
+      <h2 class="text-4xl font-bold text-gray-900">Welcome Back</h2>
+      <p class="mt-2 text-md text-gray-600">Log in to continue your learning journey</p>
+    </div>
+    
+    <div class="max-w-sm mx-auto">
+      <form id="login-form">
+        <div class="mb-4">
+          <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username or Email</label>
+          <input type="text" id="username" name="username" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="Enter your username or email" required />
+        </div>
+        
+        <div class="mb-6">
+          <div class="flex justify-between items-center mb-2">
+            <label for="password" class="block text-gray-700 text-sm font-bold">Password</label>
+            <a href="#" class="inline-block align-baseline font-bold text-sm text-lime-800 hover:text-lime-600">
+              Forgot Password?
+            </a>
+          </div>
+          <input type="password" id="password" name="password" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="••••••••" required />
+        </div>
+
+        <div class="flex items-center justify-between mb-6">
+          <label class="flex items-center text-sm text-gray-600">
+            <input type="checkbox" class="form-checkbox text-lime-800" />
+            <span class="ml-2">Remember Me</span>
+          </label>
+        </div>
+
+        <button id="submit-login-btn" type="submit" class="w-full bg-lime-800 hover:bg-lime-900 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">
+          Sign In
+        </button>
+      </form>
+
+      <div class="text-center mt-6">
+        <p class="text-gray-600">Don't have an account?</p>
+        <a href="signup.html" class="text-lime-800 font-semibold hover:text-lime-600">Sign up here</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Home button logic
+      document.getElementById('home-button').addEventListener('click', () => {
+        window.location.href = 'index.html#home-section';
+      });
+      // About button logic
+      document.getElementById('about-button').addEventListener('click', () => {
+        window.location.href = 'index.html#about-section';
+      });
+      // Contact button logic
+      document.getElementById('contact-button').addEventListener('click', () => {
+        window.location.href = 'index.html#contact-section';
+      });
+      // Premium button logic
+      document.getElementById('premium-button').addEventListener('click', () => {
+        window.location.href = 'index.html#premium-section';
+      });
+      
+      const backButton = document.getElementById('back-button');
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          window.history.back();
+        });
+      }
+
+      const loginForm = document.getElementById('login-form');
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        localStorage.setItem('userStatus', 'authenticated');
+        window.location.href = 'index.html';
+      });
+    });
+  </script>
+
+</body>
+</html>

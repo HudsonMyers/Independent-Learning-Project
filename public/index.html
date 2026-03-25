@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Independent Learning Project</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="module" src="local-storage-tracker.js"></script>
+    <script type="module" src="app.js"></script>
+</head>
+<body class="bg-lime-50 min-h-screen flex flex-col items-center justify-center p-4 font-serif">
+
+    <nav class="fixed top-4 w-full flex justify-center z-50 space-x-12">
+        <button id="home-button" class="nav-button text-lg font-bold text-gray-900 hover:text-blue-600">Home</button>
+        <button id="about-button" class="nav-button text-lg font-bold text-gray-900 hover:text-blue-600">About</button>
+        <button id="contact-button" class="nav-button text-lg font-bold text-gray-900 hover:text-blue-600">Contact</button>
+        <button id="premium-button" class="nav-button text-lg font-bold text-gray-900 hover:text-yellow-600">Premium</button>
+    </nav>
+
+    <button id="login-btn" class="fixed top-4 right-4 bg-lime-800 hover:bg-lime-900 text-white px-6 py-3 rounded-full text-lg font-bold shadow-lg z-50">
+        Log In
+    </button>
+
+    <div class="bg-lime-100 shadow-xl rounded-2xl p-6 md:p-10 w-full max-w-4xl mx-auto my-8">
+
+        <section id="home-section" class="website-section">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-0 text-center">Independent</h1>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 text-center">Learning Project</h1>
+            <p class="text-lg md:text-xl text-gray-600 text-center mb-10">A Twist On Education</p>
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-6 md:space-y-0 md:space-x-6">
+                <div id="middle-school-square" data-target="middle-school-section" class="interactive-square bg-gray-500 hover:bg-gray-600 relative">
+                    <img src="images/middleschool.png" alt="Middle school students studying" class="absolute inset-0 w-full h-full object-cover rounded-lg faded-image">
+                    <h2 class="text-2xl font-bold text-white relative z-10">Middle School</h2>
+                </div>
+                <div id="high-school-square" data-target="high-school-section" class="interactive-square bg-gray-500 hover:bg-gray-600 relative">
+                    <img src="images/Screenshot 2025-09-30 at 10.51.29 PM.png" alt="High school" class="absolute inset-0 w-full h-full object-cover rounded-lg faded-image">
+                    <h2 class="text-2xl font-bold text-white relative z-10">High School</h2>
+                </div>
+                <div id="college-courses-square" data-target="college-courses-section" class="interactive-square bg-gray-500 hover:bg-gray-600 relative">
+                    <img src="images/Screenshot 2025-09-30 at 10.54.23 PM.png" alt="College Courses" class="absolute inset-0 w-full h-full object-cover rounded-lg faded-image">
+                    <h2 class="text-2xl font-bold text-white relative z-10">College Courses</h2>
+                </div>
+            </div>
+        </section>
+
+        <section id="about-section" class="website-section hidden">
+            <h2 class="text-3xl font-bold text-center">About Me</h2>
+            <div class="flex flex-col items-center mt-4 mb-6">
+                <div class="relative w-40 h-40 rounded-full overflow-hidden mb-4 shadow-md">
+                    <img src="images/screenshot.png" alt="A professional headshot of Hudson Myers" class="w-full h-full object-cover">
+                </div>
+                <p class="text-xl font-semibold text-gray-900 text-center">Hudson Myers</p>
+                <p class="text-md text-gray-700 text-center">Student at Coastal Carolina University, pursuing a degree in Business Management with a focus in Entrepreneurship</p>
+            </div>
+            <p class="text-md text-gray-700 text-center leading-relaxed">My name is Hudson Myers, and as a student with ADHD, I often struggled to connect the daily curriculum with my long-term career goals. This project was born from that very challenge. I've created an interactive learning platform that uses AI to reframe academic subjects in a way that is personally relevant to you, helping you master core knowledge by connecting it directly to your own interests.</p>
+            <div class="mt-8">
+                <h2 class="text-3xl font-bold text-center">My Mission</h2>
+                <p class="text-md text-gray-700 text-center mt-2 leading-relaxed">To make learning meaningful and accessible by connecting core curriculum to a student's personal passions, empowering every learner to succeed on their own terms.</p>
+            </div>
+            <div class="mt-8 text-center">
+                <a href="login.html" class="inline-block bg-lime-800 text-white font-bold py-3 px-6 rounded-full hover:bg-lime-900 transition-colors duration-300 shadow-lg">
+                    Start Your Learning Journey
+                </a>
+            </div>
+        </section>
+
+        <section id="contact-section" class="website-section hidden">
+            <h2 class="text-3xl font-bold text-center">Contact</h2>
+            <p class="text-md text-gray-700 text-center">If you have any questions, feel free to reach out...</p>
+            <div class="mt-6 flex flex-col space-y-3 items-center">
+                <a href="mailto:hamyers2@gmail.com" class="text-lg text-blue-600 hover:underline">hamyers2@gmail.com</a>
+                <a href="#" class="text-lg text-blue-600 hover:underline">www.linkedin.com/in/hudson-myers-075101265</a>
+                <a href="#" class="text-lg text-blue-600 hover:underline">additional for later</a>
+            </div>
+        </section>
+
+        <section id="premium-section" class="website-section hidden">
+            <h2 class="text-4xl font-bold text-center">Unlock Your Full Potential with Premium</h2>
+            <p class="text-md text-gray-700 text-center mt-2 mb-8">Upgrade to get the tools you need to stay focused, learn faster, and ace your classes. (Coming soon!)</p>
+            <div class="space-y-8">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 text-left mt-4 flex items-center">
+                        <span class="mr-2">📸</span> Photo Drop Boxes
+                    </h3>
+                    <p class="text-md text-gray-700 text-left mt-2 leading-relaxed">Stop typing and start studying. Upload pictures of your notes and textbooks to instantly generate specific questions and get a truly personalized study experience. This feature turns your existing materials into an active learning tool.</p>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 text-left mt-4 flex items-center">
+                        <span class="mr-2">💡</span> Live Answer Correction and Feedback
+                    </h3>
+                    <p class="text-md text-gray-700 text-left mt-2 leading-relaxed">Don't just get the right answer—understand why. Our live feedback feature gives you instant insights into what you got wrong and provides step-by-step guidance to help you correct your mistakes.</p>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 text-left mt-4 flex items-center">
+                        <span class="mr-2">⚡</span> Faster and More Accurate Questions
+                    </h3>
+                    <p class="text-md text-gray-700 text-left mt-2 leading-relaxed">Supercharge your study sessions. Our premium AI model generates questions twice as fast, allowing you to maximize your learning time and keep your momentum going.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="college-courses-section" class="website-section hidden">
+            <h2 class="text-3xl font-bold text-center mb-4">College Courses</h2>
+            <div class="text-center mb-4">
+                <span>User ID: <span id="userIdDisplay">Local (no Firebase)</span></span>
+                <p id="firebase-message" class="text-sm text-red-500 hidden"></p>
+            </div>
+
+            <div class="bg-white shadow-lg rounded-2xl p-6 mb-4">
+                <button class="tab-header flex justify-between items-center w-full focus:outline-none">
+                    <h3 class="text-2xl font-bold text-gray-800">1. Course Setup</h3>
+                    <span class="tab-icon text-xl text-gray-600">▼</span>
+                </button>
+                <div id="setup-card" class="tab-content pt-4 transition-all duration-300 overflow-hidden">
+                    <p class="text-md text-gray-600 mb-6">Select your college and major, then enter your course to begin customizing your learning experience.</p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="flex flex-col">
+                            <label for="collegeDropdown" class="block font-semibold text-gray-700 mb-2">Select College:</label>
+                            <select id="collegeDropdown" class="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-lime-500 transition-colors duration-200"></select>
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="majorDropdown" class="block font-semibold text-gray-700 mb-2">Select Major:</label>
+                            <select id="majorDropdown" class="border border-gray-300 p-2 w-full rounded-md bg-gray-100 cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-lime-500 transition-colors duration-200" disabled></select>
+                        </div>
+                        <div class="md:col-span-2 flex flex-col">
+                            <label for="courseInput" class="block font-semibold text-gray-700 mb-2">Enter Course:</label>
+                            <input id="courseInput" type="text" class="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-lime-500 transition-colors duration-200" placeholder="e.g., Intro to Economics" />
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-6">
+                        <button id="setCourse" class="bg-lime-800 hover:bg-lime-900 text-white px-8 py-3 rounded-full font-bold shadow-md transition-colors duration-300">
+                            Set Course
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-lg rounded-2xl p-6 mb-4">
+                <button class="tab-header flex justify-between items-center w-full focus:outline-none">
+                    <h3 class="text-2xl font-bold text-gray-800">2. Quiz Generator</h3>
+                    <span class="tab-icon text-xl text-gray-600">►</span>
+                </button>
+                <div id="quiz-inputs-section" class="tab-content hidden pt-4 transition-all duration-300 overflow-hidden">
+                    <div id="courseHeader" class="text-md text-gray-600 mb-6 hidden"></div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="flex flex-col">
+                            <label for="unitDropdown" class="block font-semibold text-gray-700 mb-2">Select Unit:</label>
+                            <select id="unitDropdown" class="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-lime-500 transition-colors duration-200" disabled></select>
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="topicInput" class="block font-semibold text-gray-700 mb-2">Enter Topic:</label>
+                            <input id="topicInput" type="text" class="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-lime-500 transition-colors duration-200" placeholder="e.g., Supply and Demand" />
+                        </div>
+                        <div class="md:col-span-2 flex flex-col">
+                            <label for="difficultySldr" class="block font-semibold text-gray-700 mb-2">Select Difficulty: <span id="difficultyValue" class="font-normal text-gray-500">5</span></label>
+                            <input id="difficultySldr" type="range" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" />
+                        </div>
+                        <div id="photo-dropbox-container" class="md:col-span-2 p-6 bg-gray-50 border border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center space-y-4 text-center">
+                            <span class="text-2xl text-gray-400">📸</span>
+                            <h4 class="text-lg font-bold text-gray-800">Upload a photo of your notes</h4>
+                            <p class="text-sm text-gray-600">Drag and drop your file here, or click to choose a file.</p>
+                            <label for="file-upload" class="bg-lime-200 hover:bg-lime-300 text-gray-800 font-bold py-2 px-6 rounded-full cursor-pointer transition-colors duration-200">
+                                Choose file
+                            </label>
+                            <input id="file-upload" type="file" class="hidden" accept="image/*">
+                            <span id="file-name" class="mt-2 text-sm text-gray-600 truncate w-full">No file chosen</span>
+                            <img id="image-preview" class="mt-4 hidden w-full h-auto max-h-40 object-contain rounded-md border border-gray-300">
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-8">
+                        <button id="generateBtn" class="bg-lime-800 hover:bg-lime-900 text-white px-8 py-3 rounded-full font-bold shadow-md transition-colors duration-300">
+                            Generate Question
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-lg rounded-2xl p-6 mb-8">
+                <button class="tab-header flex justify-between items-center w-full focus:outline-none">
+                    <h3 class="text-2xl font-bold text-gray-800">3. Quiz Question</h3>
+                    <span class="tab-icon text-xl text-gray-600">►</span>
+                </button>
+                <div id="quiz-display-section" class="tab-content hidden pt-4 transition-all duration-300 overflow-hidden">
+                    <p id="errorMessage" class="text-red-500 mb-4 hidden"></p>
+                    <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-inner mb-6">
+                        <div id="questionText" class="text-xl md:text-2xl text-gray-800 font-normal mb-4 leading-relaxed whitespace-pre-wrap"></div>
+                    </div>
+                    <div class="answers-container space-y-4">
+                        <button id="answerBtnA" class="answer-btn w-full text-left bg-lime-100 hover:bg-lime-200 focus:bg-lime-300 text-gray-900 px-6 py-4 rounded-xl font-medium text-lg shadow-sm hover:shadow-md transition-all duration-200 border-2 border-lime-100 focus:border-lime-500">
+                            <span class="font-extrabold mr-3 text-lime-800">A.</span> <span id="answerTextA"></span>
+                        </button>
+                        <button id="answerBtnB" class="answer-btn w-full text-left bg-lime-100 hover:bg-lime-200 focus:bg-lime-300 text-gray-900 px-6 py-4 rounded-xl font-medium text-lg shadow-sm hover:shadow-md transition-all duration-200 border-2 border-lime-100 focus:border-lime-500">
+                            <span class="font-extrabold mr-3 text-lime-800">B.</span> <span id="answerTextB"></span>
+                        </button>
+                        <button id="answerBtnC" class="answer-btn w-full text-left bg-lime-100 hover:bg-lime-200 focus:bg-lime-300 text-gray-900 px-6 py-4 rounded-xl font-medium text-lg shadow-sm hover:shadow-md transition-all duration-200 border-2 border-lime-100 focus:border-lime-500">
+                            <span class="font-extrabold mr-3 text-lime-800">C.</span> <span id="answerTextC"></span>
+                        </button>
+                        <button id="answerBtnD" class="answer-btn w-full text-left bg-lime-100 hover:bg-lime-200 focus:bg-lime-300 text-gray-900 px-6 py-4 rounded-xl font-medium text-lg shadow-sm hover:shadow-md transition-all duration-200 border-2 border-lime-100 focus:border-lime-500">
+                            <span class="font-extrabold mr-3 text-lime-800">D.</span> <span id="answerTextD"></span>
+                        </button>
+                    </div>
+                    <div class="flex flex-col items-center mt-6">
+                        <p id="feedbackText" class="font-semibold text-lg hidden"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="middle-school-section" class="website-section hidden"></section>
+        <section id="high-school-section" class="website-section hidden"></section>
+        <section id="middle-school-math-section" class="website-section hidden"></section>
+        <section id="middle-school-english-section" class="website-section hidden"></section>
+        <section id="middle-school-science-section" class="website-section hidden"></section>
+        <section id="high-school-math-section" class="website-section hidden"></section>
+        <section id="high-school-english-section" class="website-section hidden"></section>
+        <section id="high-school-science-section" class="website-section hidden"></section>
+    </div>
+
+    <script type="module" src="data.js"></script>
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>

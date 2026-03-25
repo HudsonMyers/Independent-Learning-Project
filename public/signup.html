@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - Independent Learning Project</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-lime-50 min-h-screen flex flex-col items-center justify-center p-4 font-serif">
+
+  <nav class="fixed top-4 w-full flex justify-center z-50 space-x-12">
+    <button id="home-button" class="nav-button text-lg font-bold text-gray-900 hover:text-blue-600">Home</button>
+    <button id="about-button" class="nav-button text-lg font-bold text-gray-900 hover:text-blue-600">About</button>
+    <button id="contact-button" class="nav-button text-lg font-bold text-gray-900 hover:text-blue-600">Contact</button>
+    <button id="premium-button" class="nav-button text-lg font-bold text-gray-900 hover:text-yellow-600">Premium</button>
+  </nav>
+
+  <div class="bg-lime-100 shadow-xl rounded-2xl p-6 md:p-10 w-full max-w-lg mx-auto my-8 mt-24">
+    
+    <div class="mb-4">
+      <button id="back-button" class="text-black hover:text-gray-600 font-semibold transition-colors duration-300">
+        &larr; Back
+      </button>
+    </div>
+    
+    <div class="text-center mb-8">
+      <h2 class="text-4xl font-bold text-gray-900">Join Us</h2>
+      <p class="mt-2 text-md text-gray-600">Create your account to start learning</p>
+    </div>
+    
+    <div class="max-w-sm mx-auto">
+      <form id="signup-form">
+        <div class="mb-4">
+          <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Username or Email</label>
+          <input type="text" id="username" name="username" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="Choose a username or email" required />
+        </div>
+        
+        <div class="mb-4">
+          <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+          <input type="password" id="password" name="password" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="••••••••" required />
+        </div>
+
+        <div class="mb-6">
+          <label for="confirm-password" class="block text-gray-700 text-sm font-bold mb-2">Confirm Password</label>
+          <input type="password" id="confirm-password" name="confirm-password" class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-500" placeholder="••••••••" required />
+        </div>
+
+        <button id="submit-signup-btn" type="submit" class="w-full bg-lime-800 hover:bg-lime-900 text-white font-bold py-2 px-4 rounded-full transition-colors duration-300">
+          Sign Up
+        </button>
+      </form>
+
+      <div class="text-center mt-6">
+        <p class="text-gray-600">Already have an account?</p>
+        <a href="login.html" class="text-lime-800 font-semibold hover:text-lime-600">Log in here</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Home button logic
+      document.getElementById('home-button').addEventListener('click', () => {
+        window.location.href = 'index.html#home-section';
+      });
+      // About button logic
+      document.getElementById('about-button').addEventListener('click', () => {
+        window.location.href = 'index.html#about-section';
+      });
+      // Contact button logic
+      document.getElementById('contact-button').addEventListener('click', () => {
+        window.location.href = 'index.html#contact-section';
+      });
+      // Premium button logic
+      document.getElementById('premium-button').addEventListener('click', () => {
+        window.location.href = 'index.html#premium-section';
+      });
+
+      const backButton = document.getElementById('back-button');
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          window.history.back();
+        });
+      }
+
+      const signupForm = document.getElementById('signup-form');
+      signupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+
+        if (password !== confirmPassword) {
+          alert("Passwords do not match!");
+          return;
+        }
+
+        localStorage.setItem('userStatus', 'authenticated');
+        window.location.href = 'index.html';
+      });
+    });
+  </script>
+
+</body>
+</html>
